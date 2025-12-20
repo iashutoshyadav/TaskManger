@@ -3,7 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 const Login = () => {
-  const { login } = useAuth();
+  // 🔒 IMPORTANT FIX
+  const { login } = useAuth({ enabled: false });
+
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -18,7 +20,6 @@ const Login = () => {
 
     try {
       await login({ email, password });
-      // ✅ redirect ONLY after successful login
       navigate("/dashboard", { replace: true });
     } catch (err: any) {
       setError(

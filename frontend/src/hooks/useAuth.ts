@@ -5,13 +5,13 @@ import {
   register,
   logout,
   getMe,
-  updateProfile
+  updateProfile,
 } from "@/api/auth.api";
 import {
   LoginPayload,
   RegisterPayload,
   UpdateProfilePayload,
-  User
+  User,
 } from "@/types/user";
 
 type UseAuthOptions = {
@@ -19,11 +19,11 @@ type UseAuthOptions = {
 };
 
 export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
-  /* -------- CURRENT USER -------- */
+  /* ---------- CURRENT USER ---------- */
   const { data, isLoading } = useQuery({
     queryKey: ["me"],
     queryFn: getMe,
-    enabled,                 // ✅ KEY FIX
+    enabled,                 // 🔥 Controlled fetch
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: Infinity,
@@ -31,7 +31,7 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
 
   const user: User | null = data?.user ?? null;
 
-  /* -------- LOGIN -------- */
+  /* ---------- LOGIN ---------- */
   const loginMutation = useMutation({
     mutationFn: (payload: LoginPayload) => login(payload),
     onSuccess: () => {
@@ -39,7 +39,7 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
     },
   });
 
-  /* -------- REGISTER -------- */
+  /* ---------- REGISTER ---------- */
   const registerMutation = useMutation({
     mutationFn: (payload: RegisterPayload) => register(payload),
     onSuccess: () => {
@@ -47,7 +47,7 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
     },
   });
 
-  /* -------- LOGOUT -------- */
+  /* ---------- LOGOUT ---------- */
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
@@ -56,7 +56,7 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
     },
   });
 
-  /* -------- UPDATE PROFILE -------- */
+  /* ---------- UPDATE PROFILE ---------- */
   const updateProfileMutation = useMutation({
     mutationFn: (payload: UpdateProfilePayload) =>
       updateProfile(payload),
