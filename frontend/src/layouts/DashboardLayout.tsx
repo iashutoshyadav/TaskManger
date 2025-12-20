@@ -30,7 +30,7 @@ export default function DashboardLayout() {
             <Topbar />
           </header>
 
-          <main className="flex-1 overflow-y-auto px-8 py-6 bg-gray-500">
+          <main className="flex-1 overflow-y-auto px-8 py-6 bg-gray-50">
             <Outlet />
           </main>
         </div>
