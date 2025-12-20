@@ -1,6 +1,10 @@
 import { useEffect } from "react";
 import { queryClient } from "@/lib/queryClient";
-import { getSocket, connectSocket, disconnectSocket } from "@/lib/socket";
+import {
+  getSocket,
+  connectSocket,
+  disconnectSocket,
+} from "@/lib/socket";
 import { Task } from "@/types/task";
 
 export const useSocket = ({ enabled }: { enabled: boolean }) => {
