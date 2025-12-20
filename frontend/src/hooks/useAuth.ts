@@ -1,4 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
 import { queryClient } from "@/lib/queryClient";
 import {
   login,
@@ -19,11 +20,20 @@ type UseAuthOptions = {
 };
 
 export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
+  const location = useLocation();
+
+  // 🚫 HARD STOP on public routes (FINAL FIX)
+  const isPublicRoute =
+    location.pathname === "/login" ||
+    location.pathname === "/register";
+
+  const shouldFetchMe = enabled && !isPublicRoute;
+
   /* ---------- CURRENT USER ---------- */
   const { data, isLoading } = useQuery({
     queryKey: ["me"],
     queryFn: getMe,
-    enabled,                 // 🔥 Controlled fetch
+    enabled: shouldFetchMe, // ✅ GUARANTEED SAFE
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: Infinity,
@@ -42,17 +52,13 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
   /* ---------- REGISTER ---------- */
   const registerMutation = useMutation({
     mutationFn: (payload: RegisterPayload) => register(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["me"] });
-    },
   });
 
   /* ---------- LOGOUT ---------- */
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      queryClient.removeQueries({ queryKey: ["me"] });
-      queryClient.removeQueries({ queryKey: ["tasks"] });
+      queryClient.clear(); // 🔥 clean slate
     },
   });
 
