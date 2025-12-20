@@ -11,11 +11,8 @@ const getAuthToken = () => {
 export const getSocket = (): Socket => {
   if (!socket) {
     socket = io(SOCKET_URL, {
-      withCredentials: true,
       transports: ["polling", "websocket"],
-
       autoConnect: false,
-
       auth: {
         token: getAuthToken(),
       },
@@ -30,6 +27,8 @@ export const getSocket = (): Socket => {
 
 export const connectSocket = () => {
   const socketInstance = getSocket();
+
+  // refresh token before connecting
   socketInstance.auth = {
     token: getAuthToken(),
   };
