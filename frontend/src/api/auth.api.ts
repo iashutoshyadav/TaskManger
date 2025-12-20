@@ -1,32 +1,30 @@
-import axios from "axios";
+import api from "@/lib/api";
 import {
   AuthResponse,
   LoginPayload,
   RegisterPayload,
-  UpdateProfilePayload
+  UpdateProfilePayload,
 } from "@/types/user";
-
-const api = axios.create({
-  baseURL: "http://localhost:5000/api/v1",
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json"
-  }
-});
 
 /* ---------- AUTH ---------- */
 
 export const login = async (
   payload: LoginPayload
 ): Promise<AuthResponse> => {
-  const { data } = await api.post<AuthResponse>("/auth/login", payload);
+  const { data } = await api.post<AuthResponse>(
+    "/auth/login",
+    payload
+  );
   return data;
 };
 
 export const register = async (
   payload: RegisterPayload
 ): Promise<AuthResponse> => {
-  const { data } = await api.post<AuthResponse>("/auth/register", payload);
+  const { data } = await api.post<AuthResponse>(
+    "/auth/register",
+    payload
+  );
   return data;
 };
 
@@ -40,7 +38,6 @@ export const getMe = async (): Promise<AuthResponse | null> => {
     return data;
   } catch (err: any) {
     if (err.response?.status === 401) {
-      // ✅ user is simply not logged in
       return null;
     }
     throw err;

@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "@/lib/api";
 import {
   Task,
   CreateTaskPayload,
@@ -6,23 +6,20 @@ import {
   TaskFilters,
 } from "@/types/task";
 
-const api = axios.create({
-  baseURL: "http://localhost:5000/api/v1",
-  withCredentials: true,
-});
-
 export interface PaginatedTasks {
   data: Task[];
-  page?: number;
-  limit?: number;
-  total?: number;
+  meta?: {
+    page: number;
+    limit: number;
+    total: number;
+  };
 }
 
 type GetTasksParams = {
   page?: number;
   limit?: number;
   filters?: TaskFilters;
-  all?: boolean; // 👈 important for Summary
+  all?: boolean;
 };
 
 export const getTasks = async ({
@@ -36,7 +33,7 @@ export const getTasks = async ({
       page,
       limit,
       ...filters,
-      all, // 👈 backend uses this
+      all,
     },
   });
 
