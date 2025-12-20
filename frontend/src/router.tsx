@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import ProtectedRoute from "@/components/ProtectedRoute";
 
 import DashboardLayout from "@/layouts/DashboardLayout";
 
@@ -11,9 +10,7 @@ import Chat from "@/pages/Chat";
 import Calendar from "@/pages/Calendar";
 import Notifications from "@/pages/Notification";
 import Profile from "@/pages/Profile";
-
-// Components
-import TaskForm from "@/components/TaskForm";
+import NewTask from "@/pages/NewTask";
 
 // Auth
 import Login from "@/pages/Login";
@@ -27,18 +24,11 @@ export default function AppRouter() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Protected Dashboard */}
-        <Route
-          path="/dashboard/*"
-          element={
-            <ProtectedRoute>
-              <DashboardLayout />
-            </ProtectedRoute>
-          }
-        >
+        {/* Protected Dashboard (auth handled INSIDE layout) */}
+        <Route path="/dashboard/*" element={<DashboardLayout />}>
           <Route index element={<Home />} />
           <Route path="tasks" element={<Tasks />} />
-          <Route path="tasks/new" element={<TaskForm />} />
+          <Route path="tasks/new" element={<NewTask />} />
           <Route path="summary" element={<Summary />} />
           <Route path="chat" element={<Chat />} />
           <Route path="calendar" element={<Calendar />} />
