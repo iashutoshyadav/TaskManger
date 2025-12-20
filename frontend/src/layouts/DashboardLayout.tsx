@@ -1,18 +1,14 @@
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
 import { Outlet, Navigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getMe } from "@/api/auth.api";
+import { useAuth } from "@/hooks/useAuth";
 import { useSocket } from "@/hooks/useSocket";
 
 export default function DashboardLayout() {
-  const { data: me, isLoading } = useQuery({
-    queryKey: ["me"],
-    queryFn: getMe,
-    retry: false, // IMPORTANT
-  });
+  // 🔐 Auth check ONLY here
+  const { user, loading } = useAuth({ enabled: true });
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="h-screen flex items-center justify-center text-gray-500">
         Loading...
@@ -20,12 +16,12 @@ export default function DashboardLayout() {
     );
   }
 
-  // 🔒 Not logged in
-  if (!me) {
+  // 🚫 Not authenticated
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // 🔌 Connect socket ONLY after auth
+  // 🔌 Connect socket AFTER auth
   useSocket();
 
   return (

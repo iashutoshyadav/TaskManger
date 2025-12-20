@@ -14,17 +14,19 @@ import {
   User
 } from "@/types/user";
 
-export const useAuth = () => {
+type UseAuthOptions = {
+  enabled?: boolean;
+};
+
+export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
   /* -------- CURRENT USER -------- */
-  const {
-    data,
-    isLoading
-  } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["me"],
     queryFn: getMe,
+    enabled,                 // ✅ KEY FIX
     retry: false,
     refetchOnWindowFocus: false,
-    staleTime: Infinity
+    staleTime: Infinity,
   });
 
   const user: User | null = data?.user ?? null;
@@ -34,7 +36,7 @@ export const useAuth = () => {
     mutationFn: (payload: LoginPayload) => login(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
-    }
+    },
   });
 
   /* -------- REGISTER -------- */
@@ -42,17 +44,16 @@ export const useAuth = () => {
     mutationFn: (payload: RegisterPayload) => register(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
-    }
+    },
   });
 
   /* -------- LOGOUT -------- */
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      // invalidate auth + app data safely
       queryClient.removeQueries({ queryKey: ["me"] });
       queryClient.removeQueries({ queryKey: ["tasks"] });
-    }
+    },
   });
 
   /* -------- UPDATE PROFILE -------- */
@@ -61,17 +62,17 @@ export const useAuth = () => {
       updateProfile(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
-    }
+    },
   });
 
   return {
     user,
     isAuthenticated: Boolean(user),
-    loading: isLoading, // ✅ CONSISTENT NAME
+    loading: isLoading,
 
     login: loginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
-    updateProfile: updateProfileMutation.mutateAsync
+    updateProfile: updateProfileMutation.mutateAsync,
   };
 };
