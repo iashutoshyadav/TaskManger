@@ -6,26 +6,26 @@ export default function Topbar() {
 
   const getTitle = () => {
     if (location.pathname.includes("/tasks")) return "Tasks";
+    if (location.pathname.includes("/notifications")) return "Notifications";
+    if (location.pathname.includes("/profile")) return "Profile";
     return "Dashboard";
   };
 
   return (
     <div className="w-full flex items-center justify-between">
-
       {/* Left */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">
-          Dashboard
+          {getTitle()}
         </h1>
         <p className="text-gray-500">
           {new Date().toLocaleDateString("en-US", {
             weekday: "short",
             day: "2-digit",
-            month: "2-digit",
-            year: "2-digit",
+            month: "short",
+            year: "numeric",
           })}
         </p>
-
       </div>
 
       {/* Right */}

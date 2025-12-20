@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, ReactNode,} from "react";
 import { TaskFilters } from "@/types/task";
 
 type TaskUIContextType = {
@@ -9,19 +9,17 @@ type TaskUIContextType = {
   setSelectedTaskId: (id: string | null) => void;
 };
 
-const TaskUIContext = createContext<TaskUIContextType | undefined>(
-  undefined
-);
+const TaskUIContext =
+  createContext<TaskUIContextType | undefined>(undefined);
 
 export const TaskProvider = ({
-  children
+  children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) => {
   const [filters, setFilters] = useState<TaskFilters>({});
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(
-    null
-  );
+  const [selectedTaskId, setSelectedTaskId] =
+    useState<string | null>(null);
 
   return (
     <TaskUIContext.Provider
@@ -29,7 +27,7 @@ export const TaskProvider = ({
         filters,
         setFilters,
         selectedTaskId,
-        setSelectedTaskId
+        setSelectedTaskId,
       }}
     >
       {children}

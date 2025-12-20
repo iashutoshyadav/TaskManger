@@ -1,30 +1,23 @@
 import { Task } from "@/types/task";
-
 type Props = {
   task: Task;
   onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
 };
 
-export default function TaskCard({ task, onEdit, onDelete }: Props) {
+export default function TaskCard({ task, onEdit, onDelete, }: Props) {
   const assignedUser =
-    task.assignedToId &&
-    typeof task.assignedToId === "object" &&
-    "name" in task.assignedToId
-      ? task.assignedToId.name
-      : "Unassigned";
-
-  const dueDate =
-    task.dueDate && !isNaN(new Date(task.dueDate).getTime())
-      ? new Date(task.dueDate).toLocaleDateString()
-      : "No due date";
+    task.assignedToId?.name ?? "Unassigned";
+  const dueDate = task.dueDate
+    ? new Date(task.dueDate).toLocaleDateString()
+    : "No due date";
 
   return (
-    <div className="bg-white rounded-2xl p-5 w-full shadow-sm">
-      {/* Title + Actions */}
+    <div className="bg-white rounded-2xl p-5 w-full shadow-sm border">
+      {/* Header */}
       <div className="flex justify-between items-center mb-3">
         <h3 className="font-semibold text-gray-800 truncate">
-          {task.title || "Untitled Task"}
+          {task.title}
         </h3>
 
         <div className="flex gap-2">
@@ -43,7 +36,7 @@ export default function TaskCard({ task, onEdit, onDelete }: Props) {
         </div>
       </div>
 
-      {/* Priority + Status */}
+      {/* Badges */}
       <div className="flex gap-2 mb-4">
         <span className="text-xs px-3 py-1 rounded-full bg-purple-100 text-purple-600">
           {task.priority}

@@ -1,11 +1,6 @@
 import { useEffect } from "react";
 import { queryClient } from "@/lib/queryClient";
-import {
-  getSocket,
-  connectSocket,
-  disconnectSocket,
-} from "@/lib/socket";
-
+import { getSocket, connectSocket } from "@/lib/socket";
 
 export const useSocket = ({ enabled }: { enabled: boolean }) => {
   useEffect(() => {
@@ -14,19 +9,26 @@ export const useSocket = ({ enabled }: { enabled: boolean }) => {
     const socket = getSocket();
     connectSocket();
 
-    const invalidateTasks = () => {
+    const invalidateTasks = () =>
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
-    };
+
+    const invalidateNotifications = () =>
+      queryClient.invalidateQueries({
+        queryKey: ["notifications"],
+      });
 
     socket.on("task:created", invalidateTasks);
     socket.on("task:updated", invalidateTasks);
     socket.on("task:deleted", invalidateTasks);
 
+    socket.on("notification:new", invalidateNotifications);
+
     return () => {
       socket.off("task:created", invalidateTasks);
       socket.off("task:updated", invalidateTasks);
       socket.off("task:deleted", invalidateTasks);
-      disconnectSocket();
+      socket.off("notification:new", invalidateNotifications);
+      // ❌ DO NOT disconnect socket globally
     };
   }, [enabled]);
 };

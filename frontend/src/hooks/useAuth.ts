@@ -28,19 +28,16 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
 
   const shouldFetchMe = enabled && !isPublicRoute;
 
-  /* ---------- CURRENT USER ---------- */
   const { data, isLoading } = useQuery({
     queryKey: ["me"],
     queryFn: getMe,
     enabled: shouldFetchMe,
     retry: false,
-    refetchOnWindowFocus: false,
     staleTime: Infinity,
   });
 
   const user: User | null = data?.user ?? null;
 
-  /* ---------- LOGIN ---------- */
   const loginMutation = useMutation({
     mutationFn: (payload: LoginPayload) => login(payload),
     onSuccess: () => {
@@ -48,12 +45,10 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
     },
   });
 
-  /* ---------- REGISTER ---------- */
   const registerMutation = useMutation({
     mutationFn: (payload: RegisterPayload) => register(payload),
   });
 
-  /* ---------- LOGOUT ---------- */
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
@@ -61,7 +56,6 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
     },
   });
 
-  /* ---------- UPDATE PROFILE ---------- */
   const updateProfileMutation = useMutation({
     mutationFn: (payload: UpdateProfilePayload) =>
       updateProfile(payload),

@@ -1,6 +1,10 @@
 /* -------- Enums -------- */
 
-export type TaskPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
+export type TaskPriority =
+  | "LOW"
+  | "MEDIUM"
+  | "HIGH"
+  | "URGENT";
 
 export type TaskStatus =
   | "TODO"
@@ -8,12 +12,12 @@ export type TaskStatus =
   | "REVIEW"
   | "COMPLETED";
 
-/* -------- Shared Types -------- */
+/* -------- User Ref -------- */
 
 export interface UserRef {
   _id: string;
-  name?: string;
-  email?: string;
+  name: string;
+  email: string;
 }
 
 /* -------- Task -------- */
@@ -21,7 +25,7 @@ export interface UserRef {
 export interface Task {
   _id: string;
   title: string;
-  description: string;
+  description?: string;
   dueDate: string;
   priority: TaskPriority;
   status: TaskStatus;
@@ -37,10 +41,10 @@ export interface Task {
 
 export interface CreateTaskPayload {
   title: string;
-  description: string;
+  description?: string;
   dueDate: string;
   priority: TaskPriority;
-  assignedToId: string | null;
+  assignedToId?: string | null;
 }
 
 export interface UpdateTaskPayload {
@@ -59,12 +63,11 @@ export interface TaskFilters {
   priority?: TaskPriority;
 }
 
+/* -------- Pagination -------- */
+
 export interface PaginatedTasks {
   data: Task[];
-  meta?: {
-    page: number;
-    limit: number;
-    total: number;
-  };
+  total: number;
+  page: number;
+  limit: number;
 }
-

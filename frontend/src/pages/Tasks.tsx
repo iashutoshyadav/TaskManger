@@ -11,23 +11,44 @@ export default function Tasks() {
 
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  const { tasks, isLoading, error, deleteTask } = useTasks({
+  const {
+    tasks,
+    isLoading,
+    error,
+    deleteTask,
+  } = useTasks({
     page: 1,
     limit: 20,
-    filters: {},
   });
 
-  const handleEdit = (task: Task) => {
-    console.log("Edit clicked", task._id);
-    setEditingTask(task);
-  };
+  const myTasks: Task[] = tasks;
 
-  if (isLoading) return <div>Loading tasks...</div>;
-  if (error) return <div className="text-red-500">Failed to load tasks</div>;
+  if (isLoading) {
+    return (
+      <div className="text-gray-500">
+        Loading tasks...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-red-500">
+        Failed to load tasks
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-8">
-      {/* Create OR Edit form */}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-800">
+          Tasks
+        </h1>
+      </div>
+
+      {/* Create / Edit Form */}
       {(showForm || editingTask) && (
         <TaskForm
           task={editingTask ?? undefined}
@@ -35,17 +56,24 @@ export default function Tasks() {
         />
       )}
 
+      {/* Task List */}
       {!showForm && !editingTask && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {tasks.length === 0 ? (
-            <div className="text-gray-500">No tasks found</div>
+          {myTasks.length === 0 ? (
+            <div className="col-span-full text-center text-gray-400 py-12">
+              No tasks found. Create your first task 🚀
+            </div>
           ) : (
-            tasks.map((task) => (
+            myTasks.map((task) => (
               <TaskCard
                 key={task._id}
                 task={task}
-                onEdit={handleEdit}              
-                onDelete={deleteTask}           
+                onEdit={(t) => setEditingTask(t)}
+                onDelete={(id) => {
+                  if (confirm("Delete this task?")) {
+                    deleteTask(id);
+                  }
+                }}
               />
             ))
           )}

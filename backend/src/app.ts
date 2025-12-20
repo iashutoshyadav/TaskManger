@@ -18,7 +18,8 @@ app.set("trust proxy", 1);
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
+      // "http://localhost:5173",
+      //  "http://localhost:5000",
       env.clientUrl,
      ], // https://task-manger-kappa-orpin.vercel.app
     credentials: true,

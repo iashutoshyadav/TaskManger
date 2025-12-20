@@ -12,16 +12,12 @@ import {
 const base =
   "flex items-center gap-4 px-5 py-3 rounded-2xl font-medium transition w-full";
 
-const active =
-  "bg-purple-500 text-white shadow-md";
-
-const inactive =
-  "text-purple-100 hover:bg-white/10";
+const active = "bg-purple-500 text-white shadow-md";
+const inactive = "text-purple-100 hover:bg-white/10";
 
 export default function Sidebar() {
   return (
     <aside className="w-64 h-full rounded-3xl bg-gradient-to-b from-[#2a1b3d] to-[#3b1d5c] p-6 flex flex-col">
-      
       {/* Logo */}
       <div className="flex items-center gap-3 mb-10">
         <div className="h-11 w-11 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-lg">
@@ -92,7 +88,7 @@ export default function Sidebar() {
           }
         >
           <Bell size={20} />
-          Notification
+          Notifications
         </NavLink>
 
         <NavLink

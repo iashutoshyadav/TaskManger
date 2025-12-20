@@ -37,9 +37,7 @@ export const getMe = async (): Promise<AuthResponse | null> => {
     const { data } = await api.get<AuthResponse>("/auth/me");
     return data;
   } catch (err: any) {
-    if (err.response?.status === 401) {
-      return null;
-    }
+    if (err.response?.status === 401) return null;
     throw err;
   }
 };
@@ -48,7 +46,7 @@ export const updateProfile = async (
   payload: UpdateProfilePayload
 ): Promise<AuthResponse> => {
   const { data } = await api.put<AuthResponse>(
-    "/auth/profile",
+    "/users/me",
     payload
   );
   return data;
