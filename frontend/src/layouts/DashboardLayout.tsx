@@ -26,7 +26,7 @@ export default function DashboardLayout() {
         <Sidebar />
 
         <div className="flex-1 bg-white rounded-3xl flex flex-col overflow-hidden">
-          <header className="h-20 px-8 flex items-center bg-gray-500 shrink-0">
+          <header className="h-20 px-8 flex items-center bg-gray-200 shrink-0">
             <Topbar />
           </header>
 
