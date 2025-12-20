@@ -5,8 +5,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSocket } from "@/hooks/useSocket";
 
 export default function DashboardLayout() {
-  // 🔐 Auth check ONLY here
   const { user, loading } = useAuth({ enabled: true });
+
+  // ✅ ALWAYS call hook
+  useSocket({ enabled: !!user });
 
   if (loading) {
     return (
@@ -16,13 +18,9 @@ export default function DashboardLayout() {
     );
   }
 
-  // 🚫 Not authenticated
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-
-  // 🔌 Connect socket AFTER auth
-  useSocket();
 
   return (
     <div className="h-screen bg-gray-100 p-4 overflow-hidden">
