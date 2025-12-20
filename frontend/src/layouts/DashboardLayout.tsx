@@ -21,11 +21,11 @@ export default function DashboardLayout() {
   }
 
   return (
-    <div className="h-screen bg-gray-400 p-4 overflow-hidden">
+    <div className="h-screen bg-gray-100 p-4 overflow-hidden">
       <div className="flex h-full gap-4">
         <Sidebar />
 
-        <div className="flex-1 bg-white rounded-3xl flex flex-col overflow-hidden">
+        <div className="flex-1 bg-gray-400 rounded-3xl flex flex-col overflow-hidden">
           <header className="h-20 px-8 flex items-center bg-gray-50 shrink-0">
             <Topbar />
           </header>
