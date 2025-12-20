@@ -3,7 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 const Register = () => {
-  const { register } = useAuth();
+  // 🔒 IMPORTANT FIX (same as Login)
+  const { register } = useAuth({ enabled: false });
+
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -12,25 +14,24 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-  try {
-    await register({ name, email, password });
+    try {
+      await register({ name, email, password });
 
-    // ✅ Correct: go to login after registration
-    navigate("/login", { replace: true });
-  } catch (err: any) {
-    setError(
-      err?.response?.data?.message || "Registration failed"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
-
+      // ✅ Go to login after registration
+      navigate("/login", { replace: true });
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message || "Registration failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
