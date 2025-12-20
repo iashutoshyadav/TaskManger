@@ -18,7 +18,6 @@ export default function Notifications() {
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  // 🔌 REAL-TIME SOCKET LISTENERS
   useEffect(() => {
     const socket = getSocket();
     socket.connect();
@@ -63,7 +62,6 @@ export default function Notifications() {
     );
   }
 
-  // ⏰ Overdue tasks (computed)
   const overdueTasks = tasks.filter(
     (t) =>
       t.dueDate &&

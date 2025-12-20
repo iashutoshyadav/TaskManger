@@ -5,7 +5,6 @@ import { useTasks } from "@/hooks/useTasks";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Home() {
-  // ✅ get user ONLY from auth hook
   const { user } = useAuth({ enabled: true });
 
   const userId = user?.id;

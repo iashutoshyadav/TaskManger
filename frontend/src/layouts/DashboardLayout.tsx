@@ -5,13 +5,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSocket } from "@/hooks/useSocket";
 
 export default function DashboardLayout() {
-  // ✅ hooks at TOP
   const { user, loading } = useAuth({ enabled: true });
-
-  // ✅ ALWAYS called
   useSocket({ enabled: Boolean(user) });
 
-  // ⬇️ returns come AFTER hooks
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center text-gray-500">

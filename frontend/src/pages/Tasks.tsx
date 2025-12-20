@@ -44,8 +44,8 @@ export default function Tasks() {
               <TaskCard
                 key={task._id}
                 task={task}
-                onEdit={handleEdit}              // ✅ FIX
-                onDelete={deleteTask}            // ✅ FIX
+                onEdit={handleEdit}              
+                onDelete={deleteTask}           
               />
             ))
           )}

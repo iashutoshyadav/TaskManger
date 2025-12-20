@@ -20,11 +20,9 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Protected Dashboard (auth handled INSIDE layout) */}
         <Route path="/dashboard/*" element={<DashboardLayout />}>
           <Route index element={<Home />} />
           <Route path="tasks" element={<Tasks />} />

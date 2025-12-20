@@ -32,7 +32,6 @@ export default function TaskForm({ task, onClose }: Props) {
   const handleSubmit = async () => {
     try {
       if (isEdit && task) {
-        // ✅ UPDATE
         await updateTask({
           id: task._id,
           payload: {
@@ -44,7 +43,6 @@ export default function TaskForm({ task, onClose }: Props) {
           },
         });
       } else {
-        // ✅ CREATE
         await createTask({
           title,
           description,
@@ -54,7 +52,7 @@ export default function TaskForm({ task, onClose }: Props) {
         });
       }
 
-      onClose(); // close only after success
+      onClose();
     } catch (err) {
       console.error("Task submit failed", err);
     }

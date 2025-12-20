@@ -10,9 +10,7 @@ import "./styles/index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    {/* ✅ React Query Provider MUST be at top */}
     <QueryClientProvider client={queryClient}>
-      {/* ✅ UI-only context */}
       <TaskProvider>
         <AppRouter />
       </TaskProvider>

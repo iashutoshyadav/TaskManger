@@ -6,12 +6,12 @@ import PriorityBarChart from "./PriorityBarChart";
 import { Task } from "@/types/task";
 
 type Props = {
-  tasks?: Task[]; // 👈 passed from parent
+  tasks?: Task[];
   variant?: "compact" | "full";
 };
 
 export default function SummaryPanel({
-  tasks = [], // 👈 default prevents crash
+  tasks = [],
   variant = "compact"
 }: Props) {
   const total = tasks.length;

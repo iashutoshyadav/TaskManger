@@ -5,7 +5,6 @@ const SOCKET_URL = "http://localhost:5000";
 let socket: Socket | null = null;
 
 const getAuthToken = () => {
-  // adjust if you store token differently
   return localStorage.getItem("accessToken");
 };
 
@@ -15,8 +14,6 @@ export const getSocket = (): Socket => {
       withCredentials: true,
       transports: ["websocket"],
       autoConnect: false,
-
-      // 🔥 IMPORTANT: pass JWT token
       auth: {
         token: getAuthToken(),
       },
@@ -31,8 +28,6 @@ export const getSocket = (): Socket => {
 
 export const connectSocket = () => {
   const socketInstance = getSocket();
-
-  // 🔁 update token before connecting (important on login)
   socketInstance.auth = {
     token: getAuthToken(),
   };

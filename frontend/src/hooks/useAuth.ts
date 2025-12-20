@@ -22,7 +22,6 @@ type UseAuthOptions = {
 export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
   const location = useLocation();
 
-  // 🚫 HARD STOP on public routes (FINAL FIX)
   const isPublicRoute =
     location.pathname === "/login" ||
     location.pathname === "/register";
@@ -33,7 +32,7 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
   const { data, isLoading } = useQuery({
     queryKey: ["me"],
     queryFn: getMe,
-    enabled: shouldFetchMe, // ✅ GUARANTEED SAFE
+    enabled: shouldFetchMe,
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: Infinity,
@@ -58,7 +57,7 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      queryClient.clear(); // 🔥 clean slate
+      queryClient.clear();
     },
   });
 

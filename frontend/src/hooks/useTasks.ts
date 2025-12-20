@@ -17,7 +17,7 @@ interface UseTasksParams {
   page?: number;
   limit?: number;
   filters?: TaskFilters;
-  all?: boolean; // 👈 for Summary
+  all?: boolean;
 }
 
 export const useTasks = ({
@@ -27,7 +27,7 @@ export const useTasks = ({
   all = false,
 }: UseTasksParams = {}) => {
   const tasksQuery = useQuery<PaginatedTasks>({
-    queryKey: ["tasks"], // ✅ SINGLE SOURCE OF TRUTH
+    queryKey: ["tasks"],
     queryFn: () => getTasks({ page, limit, filters, all }),
     staleTime: 0,
   });
