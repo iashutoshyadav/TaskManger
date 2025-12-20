@@ -4,7 +4,6 @@ import { useAuth } from "@/hooks/useAuth";
 
 const Register = () => {
   const { register } = useAuth({ enabled: false });
-
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -22,33 +21,34 @@ const Register = () => {
       await register({ name, email, password });
       navigate("/login", { replace: true });
     } catch (err: any) {
-      setError(
-        err?.response?.data?.message || "Registration failed"
-      );
+      setError(err?.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-cyan-100 px-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white p-6 rounded-lg shadow"
+        className="w-full max-w-md bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-100"
       >
-        <h1 className="text-2xl font-semibold mb-6 text-center">
-          Register
+        <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
+          Create Account
         </h1>
+        <p className="text-center text-sm text-gray-500 mb-6">
+          Start managing your tasks efficiently
+        </p>
 
         {error && (
-          <p className="text-red-500 text-sm mb-4 text-center">
+          <div className="bg-red-50 text-red-600 text-sm p-3 rounded mb-4 text-center">
             {error}
-          </p>
+          </div>
         )}
 
         <input
-          placeholder="Name"
-          className="border p-2 rounded w-full mb-4"
+          placeholder="Full Name"
+          className="w-full mb-4 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -56,8 +56,8 @@ const Register = () => {
 
         <input
           type="email"
-          placeholder="Email"
-          className="border p-2 rounded w-full mb-4"
+          placeholder="Email Address"
+          className="w-full mb-4 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -66,7 +66,7 @@ const Register = () => {
         <input
           type="password"
           placeholder="Password"
-          className="border p-2 rounded w-full mb-4"
+          className="w-full mb-6 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -75,14 +75,14 @@ const Register = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-primary text-gray-700 py-2 rounded disabled:opacity-50"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-lg font-medium transition disabled:opacity-50"
         >
           {loading ? "Creating account..." : "Register"}
         </button>
 
-        <p className="text-sm text-center mt-4">
+        <p className="text-sm text-center mt-6 text-gray-600">
           Already have an account?{" "}
-          <Link to="/login" className="text-primary">
+          <Link to="/login" className="text-indigo-600 font-medium hover:underline">
             Login
           </Link>
         </p>

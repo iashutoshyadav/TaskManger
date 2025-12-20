@@ -3,9 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 const Login = () => {
-  // 🔒 IMPORTANT FIX
   const { login } = useAuth({ enabled: false });
-
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -22,34 +20,35 @@ const Login = () => {
       await login({ email, password });
       navigate("/dashboard", { replace: true });
     } catch (err: any) {
-      setError(
-        err?.response?.data?.message || "Invalid credentials"
-      );
+      setError(err?.response?.data?.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-100 via-white to-indigo-100 px-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white p-6 rounded-lg shadow"
+        className="w-full max-w-md bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-100"
       >
-        <h1 className="text-2xl font-semibold mb-6 text-center">
-          Login
+        <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
+          Welcome Back
         </h1>
+        <p className="text-center text-sm text-gray-500 mb-6">
+          Login to continue to your dashboard
+        </p>
 
         {error && (
-          <p className="text-red-500 text-sm mb-4 text-center">
+          <div className="bg-red-50 text-red-600 text-sm p-3 rounded mb-4 text-center">
             {error}
-          </p>
+          </div>
         )}
 
         <input
           type="email"
-          placeholder="Email"
-          className="border p-2 rounded w-full mb-4"
+          placeholder="Email Address"
+          className="w-full mb-4 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -58,7 +57,7 @@ const Login = () => {
         <input
           type="password"
           placeholder="Password"
-          className="border p-2 rounded w-full mb-4"
+          className="w-full mb-6 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -67,14 +66,14 @@ const Login = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-primary text-gray-300 py-2 rounded disabled:opacity-50"
+          className="w-full bg-cyan-600 hover:bg-cyan-700 text-white py-2.5 rounded-lg font-medium transition disabled:opacity-50"
         >
           {loading ? "Signing in..." : "Login"}
         </button>
 
-        <p className="text-sm text-center mt-4">
+        <p className="text-sm text-center mt-6 text-gray-600">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-primary">
+          <Link to="/register" className="text-cyan-600 font-medium hover:underline">
             Register
           </Link>
         </p>
