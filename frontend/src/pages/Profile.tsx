@@ -1,26 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
-import { getMe } from "@/api/auth.api";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Profile() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["me"],
-    queryFn: getMe
-  });
+  const { user, loading } = useAuth({ enabled: true });
 
-  if (isLoading) {
+  if (loading) {
     return <div className="p-6">Loading profile...</div>;
   }
 
-  if (error || !data) {
+  if (!user) {
     return (
       <div className="p-6 text-red-500">
         Failed to load profile
       </div>
     );
   }
-
-  const user = data.user;
-console.log("USER:", user);
 
   const initials = user.name
     .split(" ")

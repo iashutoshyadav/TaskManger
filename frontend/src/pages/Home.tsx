@@ -2,16 +2,13 @@ import StatCard from "@/components/StatCard";
 import TaskCard from "@/components/TaskCard";
 import AlertCard from "@/components/AlertCard";
 import { useTasks } from "@/hooks/useTasks";
-import { useQuery } from "@tanstack/react-query";
-import { getMe } from "@/api/auth.api";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Home() {
-  const { data: me } = useQuery({
-    queryKey: ["me"],
-    queryFn: getMe,
-  });
+  // ✅ get user ONLY from auth hook
+  const { user } = useAuth({ enabled: true });
 
-  const userId = me?.user?.id;
+  const userId = user?.id;
 
   const { tasks, isLoading, deleteTask } = useTasks({
     page: 1,
