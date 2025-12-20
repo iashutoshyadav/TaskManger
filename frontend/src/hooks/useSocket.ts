@@ -5,7 +5,7 @@ import {
   connectSocket,
   disconnectSocket,
 } from "@/lib/socket";
-import { Task } from "@/types/task";
+
 
 export const useSocket = ({ enabled }: { enabled: boolean }) => {
   useEffect(() => {

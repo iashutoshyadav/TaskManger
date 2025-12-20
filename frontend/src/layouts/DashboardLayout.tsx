@@ -21,7 +21,7 @@ export default function DashboardLayout() {
   }
 
   return (
-    <div className="h-screen bg-gray-100 p-4 overflow-hidden">
+    <div className="h-screen bg-gray-400 p-4 overflow-hidden">
       <div className="flex h-full gap-4">
         <Sidebar />
 

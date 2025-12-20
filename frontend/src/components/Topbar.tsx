@@ -17,14 +17,14 @@ export default function Topbar() {
         <h1 className="text-3xl font-bold text-gray-900">
           Dashboard
         </h1>
-       <p className="text-gray-500">
-  {new Date().toLocaleDateString("en-US", {
-    weekday: "short",
-    day: "2-digit",
-    month: "2-digit",
-    year: "2-digit",
-  })}
-</p>
+        <p className="text-gray-500">
+          {new Date().toLocaleDateString("en-US", {
+            weekday: "short",
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+          })}
+        </p>
 
       </div>
 
