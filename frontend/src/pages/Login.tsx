@@ -19,7 +19,7 @@ const Login = () => {
     try {
       await login({ email, password });
       // ✅ redirect ONLY after successful login
-      navigate("/dashboard", { replace: true });
+      navigate("/dashboard", /*{ replace: true }*/);
     } catch (err: any) {
       setError(
         err?.response?.data?.message || "Invalid credentials"

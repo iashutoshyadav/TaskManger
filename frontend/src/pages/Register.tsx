@@ -21,7 +21,7 @@ const Register = () => {
     await register({ name, email, password });
 
     // ✅ Correct: go to login after registration
-    navigate("/dashboard", { replace: true });
+    navigate("/login", { replace: true });
   } catch (err: any) {
     setError(
       err?.response?.data?.message || "Registration failed"
