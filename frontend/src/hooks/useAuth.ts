@@ -38,9 +38,17 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
 
   const user: User | null = data?.user ?? null;
 
-  const loginMutation = useMutation({
-    mutationFn: (payload: LoginPayload) => login(payload),
-  });
+ const loginMutation = useMutation({
+  mutationFn: (payload: LoginPayload) => login(payload),
+  onSuccess: async () => {
+    // 🔥 Force fetch user before navigation
+    await queryClient.fetchQuery({
+      queryKey: ["me"],
+      queryFn: getMe,
+    });
+  },
+});
+
 
   const registerMutation = useMutation({
     mutationFn: (payload: RegisterPayload) => register(payload),

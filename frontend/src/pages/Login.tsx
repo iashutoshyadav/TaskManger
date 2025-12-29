@@ -18,7 +18,9 @@ const Login = () => {
 
     try {
       await login({ email, password });
-      navigate("/dashboard", { replace: true });
+      setTimeout(() => {
+        navigate("/dashboard", { replace: true });
+      }, 0);
     } catch (err: any) {
       setError(err?.response?.data?.message || "Invalid credentials");
     } finally {
