@@ -1,26 +1,16 @@
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSocket } from "@/hooks/useSocket";
 
 export default function DashboardLayout() {
-  const { user, loading } = useAuth({ enabled: false });
+  // ✅ DO NOT redirect here
+  // ✅ Just read user from cache
+  const { user } = useAuth({ enabled: false });
 
   // 🔌 Connect socket only when authenticated
   useSocket({ enabled: Boolean(user) });
-
-  if (loading) {
-    return (
-      <div className="h-screen flex items-center justify-center text-gray-500">
-        Loading...
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
 
   return (
     <div className="h-screen bg-gray-100 p-4 overflow-hidden">
