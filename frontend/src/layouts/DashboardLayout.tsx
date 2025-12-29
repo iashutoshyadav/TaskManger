@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSocket } from "@/hooks/useSocket";
 
 export default function DashboardLayout() {
-  const { user, loading } = useAuth({ enabled: true });
+  const { user, loading } = useAuth({ enabled: false });
 
   // 🔌 Connect socket only when authenticated
   useSocket({ enabled: Boolean(user) });
