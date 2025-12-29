@@ -40,9 +40,6 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
 
   const loginMutation = useMutation({
     mutationFn: (payload: LoginPayload) => login(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["me"] });
-    },
   });
 
   const registerMutation = useMutation({
