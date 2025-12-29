@@ -16,13 +16,20 @@ const Login = () => {
     setLoading(true);
     setError(null);
 
+     console.log("🟡 Login started");
+
     try {
       await login({ email, password });
+        console.log("🟢 Login API success");
+
+
       setTimeout(() => {
         navigate("/dashboard", { replace: true });
       }, 0);
+      console.log("➡️ Navigated to /dashboard");
     } catch (err: any) {
       setError(err?.response?.data?.message || "Invalid credentials");
+       console.error("🔴 Login error", err);
     } finally {
       setLoading(false);
     }
