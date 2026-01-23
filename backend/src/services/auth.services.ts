@@ -3,6 +3,7 @@ import { createUser, findUserByEmail } from "../repositories/user.repository";
 import { hashPassword, comparePassword } from "../utils/password";
 import { signToken } from "../utils/jwt";
 import { IUser } from "../models/user.model";
+import { ApiError } from "../utils/ApiError";
 
 type AuthResponse = {
   user: Omit<IUser, "password">;
@@ -14,9 +15,7 @@ export const registerUser = async (
 ): Promise<AuthResponse> => {
   const existing = await findUserByEmail(input.email);
   if (existing) {
-    const err: any = new Error("Email already exists");
-    err.status = 409;
-    throw err;
+    throw ApiError.badRequest("Email already exists");
   }
 
   const hashed = await hashPassword(input.password);
@@ -35,16 +34,12 @@ export const loginUser = async (
 ): Promise<AuthResponse> => {
   const user = await findUserByEmail(input.email, true);
   if (!user || !user.password) {
-    const err: any = new Error("Invalid credentials");
-    err.status = 401;
-    throw err;
+    throw ApiError.unauthorized("Invalid credentials");
   }
 
   const ok = await comparePassword(input.password, user.password);
   if (!ok) {
-    const err: any = new Error("Invalid credentials");
-    err.status = 401;
-    throw err;
+    throw ApiError.unauthorized("Invalid credentials");
   }
 
   const token = signToken(user._id.toString());

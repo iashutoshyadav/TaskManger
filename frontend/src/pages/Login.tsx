@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { Mail, Lock, ArrowRight, Github } from "lucide-react";
 
 const Login = () => {
   const { login } = useAuth({ enabled: false });
@@ -16,79 +17,135 @@ const Login = () => {
     setLoading(true);
     setError(null);
 
-     console.log("🟡 Login started");
-
     try {
       await login({ email, password });
-        console.log("🟢 Login API success");
-
-
       setTimeout(() => {
         navigate("/dashboard", { replace: true });
       }, 0);
-      console.log("➡️ Navigated to /dashboard");
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Invalid credentials");
-       console.error("🔴 Login error", err);
+      setError(err?.response?.data?.message || "Invalid credentials. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-100 via-white to-indigo-100 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-100"
-      >
-        <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
-          Welcome Back
-        </h1>
-        <p className="text-center text-sm text-gray-500 mb-6">
-          Login to continue to your dashboard
-        </p>
+    <div className="w-full animate-in fade-in duration-700 bg-white rounded-3xl">
+      <div className="w-full max-w-md mx-auto">
 
-        {error && (
-          <div className="bg-red-50 text-red-600 text-sm p-3 rounded mb-4 text-center">
-            {error}
+        {/* CARD */}
+        <div className="glass-card border-none shadow-2xl shadow-slate-200/60 px-10 py-6">
+
+          {/* LOGO — CENTERED */}
+          <div className="flex justify-center mb-5">
+            <div className="h-12 w-12 rounded-2xl bg-brand flex items-center justify-center text-white font-bold text-2xl shadow-xl shadow-brand/20">
+              T
+            </div>
           </div>
-        )}
 
-        <input
-          type="email"
-          placeholder="Email Address"
-          className="w-full mb-4 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+          {/* FORM */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-rose-50 text-rose-600 text-xs font-bold uppercase tracking-widest p-4 rounded-xl border border-rose-100 text-center">
+                {error}
+              </div>
+            )}
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full mb-6 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+            {/* EMAIL */}
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+                Corporate Email
+              </label>
+              <div className="relative group">
+                <Mail
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand"
+                  size={18}
+                />
+                <input
+                  type="email"
+                  placeholder="name@company.com"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-12 py-4 text-sm font-medium outline-none focus:border-brand focus:ring-4 focus:ring-brand/5"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-cyan-600 hover:bg-cyan-700 text-white py-2.5 rounded-lg font-medium transition disabled:opacity-50"
-        >
-          {loading ? "Signing in..." : "Login"}
-        </button>
+            {/* PASSWORD */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center ml-1">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  Security Access
+                </label>
+                <a
+                  href="#"
+                  className="text-[10px] font-bold uppercase tracking-widest text-brand hover:underline"
+                >
+                  Forgot?
+                </a>
+              </div>
+              <div className="relative group">
+                <Lock
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand"
+                  size={18}
+                />
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-12 py-4 text-sm font-medium outline-none focus:border-brand focus:ring-4 focus:ring-brand/5"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
 
-        <p className="text-sm text-center mt-6 text-gray-600">
-          Don’t have an account?{" "}
-          <Link to="/register" className="text-cyan-600 font-medium hover:underline">
-            Register
-          </Link>
-        </p>
-      </form>
+            {/* BUTTON */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full btn-primary h-14 text-base flex items-center justify-center gap-2 shadow-xl shadow-brand/20"
+            >
+              {loading ? "Authenticating..." : (
+                <>
+                  Enter Workspace
+                  <ArrowRight size={18} />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* SOCIAL LOGIN */}
+          <div className="mt-6 pt-4 border-t border-slate-100">
+            <p className="text-center text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-6">
+              Or continue with
+            </p>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button className="flex items-center justify-center gap-2 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50">
+                <Github size={18} />
+                Github
+              </button>
+              <button className="flex items-center justify-center gap-2 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50">
+                <span className="text-blue-600 font-bold">G</span>
+                Google
+              </button>
+            </div>
+          </div>
+
+          {/* BOTTOM TEXT — CENTERED */}
+          <p className="text-sm text-center mt-5 text-slate-500 font-medium">
+            New to Toko.io?{" "}
+            <Link to="/register" className="text-brand font-bold hover:underline">
+              Initiate Account
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
+
 };
 
 export default Login;

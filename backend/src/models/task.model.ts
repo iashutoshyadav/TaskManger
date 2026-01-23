@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+/* ================= ENUMS ================= */
+
 export enum TaskPriority {
   LOW = "LOW",
   MEDIUM = "MEDIUM",
@@ -8,11 +10,21 @@ export enum TaskPriority {
 }
 
 export enum TaskStatus {
-  TODO = "TODO",
+  PENDING = "PENDING",
   IN_PROGRESS = "IN_PROGRESS",
   REVIEW = "REVIEW",
   COMPLETED = "COMPLETED",
 }
+
+/* ================= POPULATED USER ================= */
+
+export interface PopulatedUser {
+  _id: mongoose.Types.ObjectId;
+  name?: string;
+  email?: string;
+}
+
+/* ================= TASK INTERFACE ================= */
 
 export interface ITask extends Document {
   title: string;
@@ -20,11 +32,15 @@ export interface ITask extends Document {
   dueDate: Date;
   priority: TaskPriority;
   status: TaskStatus;
-  creatorId: mongoose.Types.ObjectId;
-  assignedToId: mongoose.Types.ObjectId | null;
+
+  creatorId: mongoose.Types.ObjectId | PopulatedUser;
+  assignedToId: mongoose.Types.ObjectId | PopulatedUser | null;
+
   createdAt: Date;
   updatedAt: Date;
 }
+
+/* ================= SCHEMA ================= */
 
 const TaskSchema = new Schema<ITask>(
   {
@@ -50,7 +66,7 @@ const TaskSchema = new Schema<ITask>(
     status: {
       type: String,
       enum: Object.values(TaskStatus),
-      default: TaskStatus.TODO,
+      default: TaskStatus.PENDING,
     },
     creatorId: {
       type: Schema.Types.ObjectId,
@@ -61,7 +77,7 @@ const TaskSchema = new Schema<ITask>(
     assignedToId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      default: null,     // ✅ FIX
+      default: null,
       index: true,
     },
   },

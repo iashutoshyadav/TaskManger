@@ -2,21 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Global resets */
-html,
-body,
-#root {
-  height: 100%;
+@layer base {
+
+  html,
+  body,
+  #root {
+    @apply h-full;
+  }
+
+  body {
+    @apply bg-[#F8FAFC] text-slate-900 font-sans antialiased;
+  }
 }
 
-body {
-  @apply bg-gray-50 text-gray-900 antialiased;
-}
-body {
-  background-color: #f8fafc;
-  font-family: Inter, system-ui, sans-serif;
-}
-/* Utility for page containers */
-.page-container {
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-xl shadow-slate-200/50 rounded-3xl p-6 transition-all duration-300;
+  }
+
+  .btn-primary {
+    @apply bg-brand text-white px-6 py-3 rounded-xl font-medium transition-all hover:bg-brand-light active:scale-95 shadow-lg shadow-brand/20;
+  }
+
+  .brand-gradient {
+    @apply bg-gradient-to-br from-brand to-purple-600;
+  }
+
+  .glass-morph {
+    @apply bg-white/40 backdrop-blur-lg border border-white/40 shadow-2xl;
+  }
 }

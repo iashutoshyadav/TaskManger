@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import * as repo from "../repositories/notification.repository";
 import { getIO } from "../config/socket";
 import { INotification } from "../models/notification.model";
+import { ApiError } from "../utils/ApiError";
 
 /* ===========================
    CREATE (TASK ASSIGNMENT)
@@ -15,9 +16,7 @@ export const notifyTaskAssignment = async (
     !mongoose.Types.ObjectId.isValid(receiverId) ||
     !mongoose.Types.ObjectId.isValid(taskId)
   ) {
-    const err: any = new Error("Invalid ID");
-    err.status = 400;
-    throw err;
+    throw ApiError.badRequest("Invalid ID");
   }
 
   const notification = await repo.createNotification({
@@ -45,9 +44,7 @@ export const getUserNotifications = async (
   limit: number
 ) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    const err: any = new Error("Invalid user ID");
-    err.status = 400;
-    throw err;
+    throw ApiError.badRequest("Invalid user ID");
   }
 
   return repo.getNotificationsByUser(userId, page, limit);
@@ -59,9 +56,7 @@ export const getUnreadUserNotifications = async (
   limit: number
 ) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    const err: any = new Error("Invalid user ID");
-    err.status = 400;
-    throw err;
+    throw ApiError.badRequest("Invalid user ID");
   }
 
   return repo.getUnreadNotificationsByUser(userId, page, limit);
@@ -77,15 +72,11 @@ export const markNotificationRead = async (
   const notification = await repo.findNotificationById(notificationId);
 
   if (!notification) {
-    const err: any = new Error("Notification not found");
-    err.status = 404;
-    throw err;
+    throw ApiError.notFound("Notification not found");
   }
 
   if (notification.receiverId.toString() !== userId) {
-    const err: any = new Error("Forbidden");
-    err.status = 403;
-    throw err;
+    throw ApiError.forbidden();
   }
 
   return (await repo.markNotificationAsRead(
@@ -97,9 +88,7 @@ export const markAllNotificationsRead = async (
   userId: string
 ): Promise<void> => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
-    const err: any = new Error("Invalid user ID");
-    err.status = 400;
-    throw err;
+    throw ApiError.badRequest("Invalid user ID");
   }
 
   await repo.markAllNotificationsAsRead(userId);

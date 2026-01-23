@@ -2,9 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import { RegisterDto, LoginDto } from "../dtos/auth.dto";
 import { registerUser, loginUser } from "../services/auth.services";
 import { AuthRequest } from "../middlewares/auth.middleware";
-import { UserModel } from "../models/user.model";
+import { findUserById } from "../repositories/user.repository";
 import { env } from "../config/env";
 import { CookieOptions } from "express";
+import { ApiError } from "../utils/ApiError";
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
@@ -38,11 +39,15 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   }
 };
 
-export const getMe = async (req: AuthRequest, res: Response) => {
-  const user = await UserModel.findById(req.userId).select("_id name email");
-  if (!user) return res.status(404).json({ message: "User not found" });
+export const getMe = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const user = await findUserById(req.userId!);
+    if (!user) throw ApiError.notFound("User not found");
 
-  res.status(200).json({ user });
+    res.status(200).json({ user });
+  } catch (e) {
+    next(e);
+  }
 };
 
 export const logout = async (_req: Request, res: Response) => {

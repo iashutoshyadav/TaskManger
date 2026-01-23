@@ -70,14 +70,8 @@ export default function Notifications() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold">Notifications</h1>
-        <p className="text-gray-500">
-          Stay updated with task activities and alerts
-        </p>
-      </div>
 
       {/* Today Alerts */}
       <div className="bg-white rounded-2xl p-6 space-y-4">

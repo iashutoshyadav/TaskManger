@@ -7,7 +7,7 @@ export type TaskPriority =
   | "URGENT";
 
 export type TaskStatus =
-  | "TODO"
+  | "PENDING"
   | "IN_PROGRESS"
   | "REVIEW"
   | "COMPLETED";
@@ -26,7 +26,7 @@ export interface Task {
   _id: string;
   title: string;
   description?: string;
-  dueDate: string;
+  dueDate: string | null;
   priority: TaskPriority;
   status: TaskStatus;
 
@@ -42,15 +42,16 @@ export interface Task {
 export interface CreateTaskPayload {
   title: string;
   description?: string;
-  dueDate: string;
+  dueDate: string |null;
   priority: TaskPriority;
+  status?: TaskStatus;
   assignedToId?: string | null;
 }
 
 export interface UpdateTaskPayload {
   title?: string;
   description?: string;
-  dueDate?: string;
+  dueDate?: string | null;
   priority?: TaskPriority;
   status?: TaskStatus;
   assignedToId?: string | null;

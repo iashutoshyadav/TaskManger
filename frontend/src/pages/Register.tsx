@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { Mail, Lock, User, ArrowRight, Sparkles } from "lucide-react";
 
 const Register = () => {
   const { register } = useAuth({ enabled: false });
@@ -21,72 +22,101 @@ const Register = () => {
       await register({ name, email, password });
       navigate("/login", { replace: true });
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Registration failed");
+      setError(err?.response?.data?.message || "Creation failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-cyan-100 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-100"
-      >
-        <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
-          Create Account
-        </h1>
-        <p className="text-center text-sm text-gray-500 mb-6">
-          Start managing your tasks efficiently
-        </p>
-
-        {error && (
-          <div className="bg-red-50 text-red-600 text-sm p-3 rounded mb-4 text-center">
-            {error}
+    <div className="w-full p-6 animate-in fade-in duration-700">
+      <div className="w-full max-w-md mx-auto">
+        <div className="glass-card border-none shadow-2xl shadow-gray-200/60 p-10">
+          <div className="text-center mb-0">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center justify-center gap-2">
+              Join Toko.io
+              <Sparkles className="text-brand" size={24} />
+            </h1>
           </div>
-        )}
 
-        <input
-          placeholder="Full Name"
-          className="w-full mb-4 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-rose-50 text-rose-600 text-xs font-bold uppercase tracking-widest p-4 rounded-xl border border-rose-100 text-center">
+                {error}
+              </div>
+            )}
 
-        <input
-          type="email"
-          placeholder="Email Address"
-          className="w-full mb-4 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-600 ml-1">Full Name</label>
+              <div className="relative group">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors" size={18} />
+                <input
+                  placeholder="Professional Name"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-12 py-4 text-sm font-medium outline-none focus:border-brand focus:ring-4 focus:ring-brand/5 transition-all"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full mb-6 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-600 ml-1">Corporate Email</label>
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand transition-colors" size={18} />
+                <input
+                  type="email"
+                  placeholder="name@company.com"
+                  className="w-full bg-slate-50 border border-gray-200 rounded-xl px-12 py-4 text-sm font-medium outline-none focus:border-brand focus:ring-4 focus:ring-brand/5 transition-all"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-lg font-medium transition disabled:opacity-50"
-        >
-          {loading ? "Creating account..." : "Register"}
-        </button>
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-gray-600 ml-1">Security Access</label>
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand transition-colors" size={18} />
+                <input
+                  type="password"
+                  placeholder="Create a strong password"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-12 py-4 text-sm font-medium outline-none focus:border-brand focus:ring-4 focus:ring-brand/5 transition-all"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
 
-        <p className="text-sm text-center mt-6 text-gray-600">
-          Already have an account?{" "}
-          <Link to="/login" className="text-indigo-600 font-medium hover:underline">
-            Login
-          </Link>
-        </p>
-      </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full btn-primary h-14 text-base flex items-center justify-center gap-2 group shadow-xl shadow-brand/20"
+            >
+              {loading ? "Initializing..." : (
+                <>
+                  Start
+                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="mt-5 pt-2 border-t border-gray-500 text-center">
+            <p className="text-[10px] font-medium text-gray-600">
+              By registering, you agree to our <a href="#" className="underline">Terms</a> and <a href="#" className="underline">Privacy Policy</a>.
+            </p>
+          </div>
+          <p className="text-sm text-center mt-5 text-slate-600 font-medium">
+            Already an Toko?{" "}
+            <Link to="/login" className="text-brand font-bold hover:underline">
+              Sign In Instead
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

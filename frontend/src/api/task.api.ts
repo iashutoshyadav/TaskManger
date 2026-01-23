@@ -3,11 +3,29 @@ import {
   Task,
   CreateTaskPayload,
   UpdateTaskPayload,
+  TaskFilters,
 } from "@/types/task";
 
+export interface PaginatedTasks {
+  data: Task[];
+  page: number;
+  limit: number;
+  total: number;
+}
+
 /* ---------- GET ---------- */
-export const getTasks = async (params: any) => {
-  const { data } = await api.get("/tasks", { params });
+export const getTasks = async (params: {
+  page: number;
+  limit: number;
+  filters: TaskFilters;
+}): Promise<PaginatedTasks> => {
+  const { data } = await api.get<PaginatedTasks>("/tasks", {
+    params: {
+      page: params.page,
+      limit: params.limit,
+      ...params.filters,
+    },
+  });
   return data;
 };
 

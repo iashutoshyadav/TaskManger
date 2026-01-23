@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 import mongoose from "mongoose";
 import { logger } from "../utils/logger";
+import { ApiError } from "../utils/ApiError";
 
 export const errorMiddleware = (
   err: any,
@@ -10,12 +11,20 @@ export const errorMiddleware = (
   _next: NextFunction
 ) => {
   let statusCode = err.status || 500;
-  let message = "Internal Server Error";
+  let message = err.message || "Internal Server Error";
+
+  /* ======================
+     API ERROR
+  ====================== */
+  if (err instanceof ApiError) {
+    statusCode = err.status;
+    message = err.message;
+  }
 
   /* ======================
      ZOD VALIDATION
   ====================== */
-  if (err instanceof ZodError) {
+  else if (err instanceof ZodError) {
     return res.status(400).json({
       message: "Validation failed",
       errors: err.issues.map((issue) => ({
@@ -28,7 +37,7 @@ export const errorMiddleware = (
   /* ======================
      MONGOOSE VALIDATION
   ====================== */
-  if (err instanceof mongoose.Error.ValidationError) {
+  else if (err instanceof mongoose.Error.ValidationError) {
     return res.status(400).json({
       message: "Validation failed",
       errors: Object.values(err.errors).map((e: any) => ({
@@ -41,7 +50,7 @@ export const errorMiddleware = (
   /* ======================
      INVALID OBJECT ID
   ====================== */
-  if (err instanceof mongoose.Error.CastError) {
+  else if (err instanceof mongoose.Error.CastError) {
     statusCode = 400;
     message = "Invalid ID format";
   }
@@ -49,64 +58,23 @@ export const errorMiddleware = (
   /* ======================
      DUPLICATE KEY
   ====================== */
-  if (err?.code === 11000) {
+  else if (err?.code === 11000) {
     statusCode = 409;
     const field = Object.keys(err.keyValue)[0];
     message = `${field} already exists`;
   }
 
   /* ======================
-     AUTH
-  ====================== */
-  if (err.message === "Unauthorized") {
-    statusCode = 401;
-    message = "Unauthorized access";
-  }
-
-  /* ======================
-     FORBIDDEN ✅ FIX
-  ====================== */
-  if (err.message === "Forbidden") {
-    statusCode = 403;
-    message = "You do not have permission to perform this action";
-  }
-
-  /* ======================
-     NOT FOUND
-  ====================== */
-  if (
-    ["Task not found", "User not found", "Notification not found"].includes(
-      err.message
-    )
-  ) {
-    statusCode = 404;
-    message = err.message;
-  }
-
-  /* ======================
-     BAD REQUEST
-  ====================== */
-  if (
-    [
-      "Due date cannot be in the past",
-      "Email already in use",
-      "Invalid email or password",
-      "Invalid task ID",
-      "Invalid creator ID",
-      "Invalid assigned user ID",
-    ].includes(err.message)
-  ) {
-    statusCode = 400;
-    message = err.message;
-  }
-
-  /* ======================
      LOGGING
   ====================== */
-  logger.error(err.message, {
-    statusCode,
-    stack: err.stack,
-  });
+  if (statusCode >= 500) {
+    logger.error(err.message, {
+      statusCode,
+      stack: err.stack,
+    });
+  } else {
+    logger.warn(err.message, { statusCode });
+  }
 
   res.status(statusCode).json({
     message,
