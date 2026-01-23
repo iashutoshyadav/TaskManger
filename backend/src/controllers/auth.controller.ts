@@ -9,8 +9,8 @@ import { ApiError } from "../utils/ApiError";
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
-  secure: env.nodeEnv === "production",
-  sameSite: env.nodeEnv === "production" ? "none" : "lax",
+  secure: true,
+  sameSite: "none",
   path: "/",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };

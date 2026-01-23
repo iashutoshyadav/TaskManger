@@ -13,17 +13,28 @@ import projectRoutes from "./routes/project.routes";
 
 const app = express();
 
-/* 🔥 REQUIRED FOR RENDER / HTTPS COOKIES */
 app.set("trust proxy", 1);
+
+const allowedOrigin = process.env.CLIENT_URL;
+
+if (!allowedOrigin) {
+  throw new Error("CLIENT_URL environment variable is not defined");
+}
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (origin === allowedOrigin) return callback(null, true);
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+app.options("*", cors({ origin: allowedOrigin, credentials: true }));
 
 app.use(express.json());
 app.use(cookieParser());
