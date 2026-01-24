@@ -15,18 +15,17 @@ const app = express();
 
 app.set("trust proxy", 1);
 
-const allowedOrigin = process.env.CLIENT_URL;
-
-if (!allowedOrigin) {
-  throw new Error("CLIENT_URL environment variable is not defined");
-}
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "https://tokoai.in",
+].filter(Boolean) as string[];
 
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
-      if (origin === allowedOrigin) return callback(null, true);
-      return callback(new Error("Not allowed by CORS"));
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(null, false);
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
@@ -34,7 +33,10 @@ app.use(
   })
 );
 
-app.options("*", cors({ origin: allowedOrigin, credentials: true }));
+app.options("*", cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
 
 app.use(express.json());
 app.use(cookieParser());
