@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation,Link } from "react-router-dom";
 import { Search, Bell, Download } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -52,9 +52,11 @@ export default function Topbar() {
             <Bell size={20} />
           </button>
 
-          <div className="h-11 w-11 rounded-full bg-brand h-11 w-11 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-brand/20 border-2 border-white ring-1 ring-slate-100">
+          <Link to="/Profile" aria-label="Go to profile">
+          <div className="h-11 w-11 rounded-full bg-brand  flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-brand/20 border-2 border-white ring-1 ring-slate-100">
             {user?.name?.[0] || 'A'}
           </div>
+          </Link>
         </div>
 
         {/* Create Button */}
