@@ -10,6 +10,10 @@ describe("Auth Service", () => {
       _id: "user123",
       name: "Test User",
       email: "test@example.com",
+      toObject: function () {
+        const { toObject, ...rest } = this;
+        return rest;
+      },
     });
 
     const result = await registerUser({

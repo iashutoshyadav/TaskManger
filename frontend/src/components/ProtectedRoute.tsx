@@ -4,11 +4,7 @@ import FullPageLoader from "./FullPageLoader";
 
 export default function ProtectedRoute() {
   const location = useLocation();
-  console.log("🚀 ProtectedRoute mounted at:", location.pathname);
-
   const { user, loading } = useAuth({ enabled: true });
-  console.log("🔐 Auth state in ProtectedRoute:", { user, loading });
-
   if (loading) {
     return <FullPageLoader />;
   }

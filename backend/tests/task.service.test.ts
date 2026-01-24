@@ -13,7 +13,7 @@ jest.mock("../src/config/socket", () => ({
 describe("Task Service", () => {
   it("should create task successfully", async () => {
     const mockTask = {
-      _id: "task123",
+      _id: "507f1f77bcf86cd799439011",
       title: "Test Task",
       description: "Test Description",
       priority: TaskPriority.LOW,
@@ -22,15 +22,15 @@ describe("Task Service", () => {
 
     (taskRepo.createTask as jest.Mock).mockResolvedValue(mockTask);
 
-    const task = await createNewTask(
+    const task: any = await createNewTask(
       {
         title: "Test Task",
         description: "Test Description",
-        dueDate: new Date(Date.now() + 86400000),
+        dueDate: new Date(Date.now() + 86400000).toISOString(),
         priority: TaskPriority.LOW,
-        assignedToId: "user123",
+        assignedToId: "507f1f77bcf86cd799439012",
       },
-      "creator123"
+      "507f1f77bcf86cd799439013"
     );
 
     expect(task).toBeDefined();
@@ -45,7 +45,7 @@ describe("Task Service", () => {
           title: "Test Task",
           priority: TaskPriority.LOW,
         } as any,
-        "creator123"
+        "507f1f77bcf86cd799439013"
       )
     ).rejects.toThrow("Due date is required");
   });
