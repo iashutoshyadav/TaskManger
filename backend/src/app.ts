@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
@@ -33,10 +33,7 @@ app.use(
   })
 );
 
-app.options("*", cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
+app.options("*", cors({ origin: allowedOrigins, credentials: true }));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -45,7 +42,7 @@ if (env.nodeEnv !== "production") {
   app.use(morgan("dev"));
 }
 
-app.get("/health", (_req, res) => {
+app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ status: "OK" });
 });
 
