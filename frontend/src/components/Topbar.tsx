@@ -52,7 +52,7 @@ export default function Topbar() {
             <Bell size={20} />
           </button>
 
-          <Link to="/Profile" aria-label="Go to profile">
+          <Link to="/dashboard/profile" aria-label="Go to profile">
           <div className="h-11 w-11 rounded-full bg-brand  flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-brand/20 border-2 border-white ring-1 ring-slate-100">
             {user?.name?.[0] || 'A'}
           </div>
