@@ -21,7 +21,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
     const { user, token } = await registerUser(data);
 
     res.cookie("token", token, cookieOptions);
-    res.status(201).json({ user });
+    res.status(201).json({ user, token });
   } catch (e) {
     next(e);
   }
@@ -33,7 +33,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     const { user, token } = await loginUser(data);
 
     res.cookie("token", token, cookieOptions);
-    res.status(200).json({ user });
+    res.status(200).json({ user, token });
   } catch (e) {
     next(e);
   }

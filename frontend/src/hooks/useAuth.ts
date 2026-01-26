@@ -38,25 +38,34 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
 
   const user: User | null = data?.user ?? null;
 
- const loginMutation = useMutation({
-  mutationFn: (payload: LoginPayload) => login(payload),
-  onSuccess: async () => {
-    // 🔥 Force fetch user before navigation
-    await queryClient.fetchQuery({
-      queryKey: ["me"],
-      queryFn: getMe,
-    });
-  },
-});
+  const loginMutation = useMutation({
+    mutationFn: (payload: LoginPayload) => login(payload),
+    onSuccess: async (data: any) => {
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+      // 🔥 Force fetch user before navigation
+      await queryClient.fetchQuery({
+        queryKey: ["me"],
+        queryFn: getMe,
+      });
+    },
+  });
 
 
   const registerMutation = useMutation({
     mutationFn: (payload: RegisterPayload) => register(payload),
+    onSuccess: (data: any) => {
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+    },
   });
 
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
+      localStorage.removeItem("token");
       queryClient.clear();
     },
   });
