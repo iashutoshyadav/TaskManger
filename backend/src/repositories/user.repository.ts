@@ -1,9 +1,10 @@
-import { UserModel, IUser } from "../models/user.model";
+import { UserModel, IUser, UserRole } from "../models/user.model";
 
 type CreateUserData = {
   name: string;
   email: string;
   password: string;
+  role?: UserRole;
 };
 
 export const createUser = async (
@@ -29,10 +30,16 @@ export const findUserById = async (
 
 export const updateUserById = async (
   id: string,
-  data: Partial<Pick<IUser, "name">>
+  data: Partial<Pick<IUser, "name" | "role">>
 ): Promise<IUser | null> => {
   return UserModel.findByIdAndUpdate(id, data, {
     new: true,
     runValidators: true,
   }).exec();
+};
+
+export const findAllUsers = async (
+  organizationId: string
+): Promise<IUser[]> => {
+  return UserModel.find({ organizationId }).select("name email _id organizationId").exec();
 };

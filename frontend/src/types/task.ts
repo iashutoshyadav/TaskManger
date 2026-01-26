@@ -42,7 +42,7 @@ export interface Task {
 export interface CreateTaskPayload {
   title: string;
   description?: string;
-  dueDate: string |null;
+  dueDate: string | null;
   priority: TaskPriority;
   status?: TaskStatus;
   assignedToId?: string | null;
@@ -62,6 +62,7 @@ export interface UpdateTaskPayload {
 export interface TaskFilters {
   status?: TaskStatus;
   priority?: TaskPriority;
+  projectId?: string;
 }
 
 /* -------- Pagination -------- */

@@ -4,6 +4,9 @@ export const RegisterDto = z.object({
   name: z.string().trim().min(2).max(50),
   email: z.string().trim().email(),
   password: z.string().min(8),
+  role: z.enum(["ADMIN", "MEMBER", "GUEST"]).optional(),
+  organizationName: z.string().trim().min(2).max(100).optional(),
+  inviteToken: z.string().optional(),
 });
 
 export const LoginDto = z.object({

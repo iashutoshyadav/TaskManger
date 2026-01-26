@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import * as repo from "../repositories/notification.repository";
 import { getIO } from "../config/socket";
-import { INotification } from "../models/notification.model";
+import { INotification, NotificationType } from "../models/notification.model";
 import { ApiError } from "../utils/ApiError";
 
 /* ===========================
@@ -22,12 +22,43 @@ export const notifyTaskAssignment = async (
   const notification = await repo.createNotification({
     receiverId: new mongoose.Types.ObjectId(receiverId),
     taskId: new mongoose.Types.ObjectId(taskId),
+    type: NotificationType.TASK_ASSIGNED,
     message: `You have been assigned a new task: "${taskTitle}"`,
   });
 
   getIO().to(receiverId).emit("notification:new", {
     id: notification._id,
     taskId,
+    message: notification.message,
+    createdAt: notification.createdAt,
+  });
+
+  return notification;
+};
+
+/* ===========================
+   CREATE (WORKSPACE INVITE)
+=========================== */
+export const notifyWorkspaceInvitation = async (
+  receiverId: string,
+  inviterName: string,
+  organizationName: string,
+  inviteId: string,
+  inviteToken: string
+): Promise<INotification> => {
+  const notification = await repo.createNotification({
+    receiverId: new mongoose.Types.ObjectId(receiverId),
+    inviteId: new mongoose.Types.ObjectId(inviteId),
+    inviteToken,
+    type: NotificationType.WORKSPACE_INVITE,
+    message: `${inviterName} invited you to join "${organizationName}"`,
+  });
+
+  getIO().to(receiverId).emit("notification:new", {
+    id: notification._id,
+    inviteId,
+    inviteToken,
+    type: NotificationType.WORKSPACE_INVITE,
     message: notification.message,
     createdAt: notification.createdAt,
   });

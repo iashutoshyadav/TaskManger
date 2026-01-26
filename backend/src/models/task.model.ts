@@ -33,8 +33,9 @@ export interface ITask extends Document {
   priority: TaskPriority;
   status: TaskStatus;
 
-  creatorId: mongoose.Types.ObjectId | PopulatedUser;
-  assignedToId: mongoose.Types.ObjectId | PopulatedUser | null;
+  creatorId: mongoose.Types.ObjectId;
+  assignedToId?: mongoose.Types.ObjectId;
+  organizationId: mongoose.Types.ObjectId;
 
   createdAt: Date;
   updatedAt: Date;
@@ -78,6 +79,11 @@ const TaskSchema = new Schema<ITask>(
       type: Schema.Types.ObjectId,
       ref: "User",
       default: null,
+    },
+    organizationId: {
+      type: Schema.Types.ObjectId,
+      ref: "Organization",
+      required: true,
       index: true,
     },
   },

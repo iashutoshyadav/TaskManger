@@ -2,6 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  role: "ADMIN" | "MEMBER" | "GUEST";
   createdAt: string;
   updatedAt: string;
   lastLoginAt?: string;
@@ -20,6 +21,8 @@ export interface RegisterPayload {
   name: string;
   email: string;
   password: string;
+  organizationName?: string;
+  inviteToken?: string;
 }
 
 export interface UpdateProfilePayload {

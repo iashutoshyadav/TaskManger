@@ -1,15 +1,19 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Mail, Lock, User, ArrowRight, Sparkles } from "lucide-react";
+import JoinWorkspaceModal from "@/components/JoinWorkspaceModal";
 
 const Register = () => {
-  const { register } = useAuth({ enabled: false });
+  const { register, user } = useAuth({ enabled: false });
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const inviteToken = searchParams.get("invite");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [organizationName, setOrganizationName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +23,13 @@ const Register = () => {
     setError(null);
 
     try {
-      await register({ name, email, password });
+      await register({
+        name,
+        email,
+        password,
+        organizationName: organizationName || undefined,
+        inviteToken: inviteToken || undefined
+      });
       navigate("/login", { replace: true });
     } catch (err: any) {
       setError(err?.response?.data?.message || "Creation failed. Please try again.");
@@ -27,6 +37,15 @@ const Register = () => {
       setLoading(false);
     }
   };
+
+  if (user && inviteToken) {
+    return (
+      <JoinWorkspaceModal
+        token={inviteToken}
+        onClose={() => navigate("/dashboard")}
+      />
+    );
+  }
 
   return (
     <div className="w-full p-6 animate-in fade-in duration-700">
@@ -89,6 +108,20 @@ const Register = () => {
                 />
               </div>
             </div>
+            {!inviteToken && (
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-gray-600 ml-1">Workspace / Company Name (Optional)</label>
+                <div className="relative group">
+                  <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand transition-colors" size={18} />
+                  <input
+                    placeholder="e.g. Acme Corp"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-12 py-4 text-sm font-medium outline-none focus:border-brand focus:ring-4 focus:ring-brand/5 transition-all"
+                    value={organizationName}
+                    onChange={(e) => setOrganizationName(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
 
             <button
               type="submit"

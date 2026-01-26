@@ -5,7 +5,7 @@ import {
   TaskPriority,
 } from "../models/task.model";
 
-export const createTask = (data: any) =>
+export const createTask = (data: any): Promise<any> =>
   TaskModel.create(data);
 
 export const getTaskById = (id: string) =>
@@ -29,23 +29,36 @@ export const deleteTaskById = (id: string) =>
 /* ✅ PAGINATED + COUNT */
 export const findTasksForUser = async ({
   userId,
+  organizationId,
+  projectId,
   status,
   priority,
   page = 1,
   limit = 20,
 }: {
   userId: string;
+  organizationId?: string;
+  projectId?: string;
   status?: TaskStatus;
   priority?: TaskPriority;
   page?: number;
   limit?: number;
 }) => {
-  const filters: any = {
-    $or: [
+  const filters: any = {};
+
+  if (projectId) {
+    filters.projectId = new mongoose.Types.ObjectId(projectId);
+  }
+
+  if (organizationId) {
+    filters.organizationId = new mongoose.Types.ObjectId(organizationId);
+  } else {
+    // Fallback to user-specific filtering if no organization is provided
+    filters.$or = [
       { creatorId: new mongoose.Types.ObjectId(userId) },
       { assignedToId: new mongoose.Types.ObjectId(userId) },
-    ],
-  };
+    ];
+  }
 
   if (status) filters.status = status;
   if (priority) filters.priority = priority;

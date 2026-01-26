@@ -1,115 +1,96 @@
 import { useEffect, useState } from "react";
 import AlertCard from "@/components/AlertCard";
-import { useTasks } from "@/hooks/useTasks";
-import { getSocket } from "@/lib/socket"; // your existing socket setup
-
-interface Notification {
-  id: string;
-  title: string;
-  time: string;
-}
+import { useNotifications } from "@/hooks/useNotifications";
+import { getSocket } from "@/lib/socket";
+import { useQueryClient } from "@tanstack/react-query";
+import JoinWorkspaceModal from "@/components/JoinWorkspaceModal";
 
 export default function Notifications() {
-  const { tasks, isLoading, error } = useTasks({
-    page: 1,
-    limit: 50,
-    filters: {}
-  });
+  const queryClient = useQueryClient();
 
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const {
+    notifications,
+    isLoading,
+    error,
+    markAsRead
+  } = useNotifications();
+  const [selectedToken, setSelectedToken] = useState<string | null>(null);
 
+  // Real-time updates
   useEffect(() => {
     const socket = getSocket();
-    socket.connect();
 
-    socket.on("task:assigned", (payload) => {
-      setNotifications((prev) => [
-        {
-          id: crypto.randomUUID(),
-          title: `Task assigned: ${payload.title}`,
-          time: new Date().toLocaleTimeString()
-        },
-        ...prev
-      ]);
-    });
+    const handleNewNotification = () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    };
 
-    socket.on("task:status-updated", (payload) => {
-      setNotifications((prev) => [
-        {
-          id: crypto.randomUUID(),
-          title: `Task status updated: ${payload.title}`,
-          time: new Date().toLocaleTimeString()
-        },
-        ...prev
-      ]);
-    });
+    socket.on("notification:new", handleNewNotification);
 
     return () => {
-      socket.off("task:assigned");
-      socket.off("task:status-updated");
+      socket.off("notification:new", handleNewNotification);
     };
-  }, []);
+  }, [queryClient]);
+
+  const handleNotificationClick = (note: any) => {
+    if (!note.isRead) markAsRead(note._id);
+
+    if (note.type === "WORKSPACE_INVITE" && note.inviteToken) {
+      setSelectedToken(note.inviteToken);
+    }
+  };
 
   if (isLoading) {
-    return <div className="p-6">Loading notifications...</div>;
+    return <div className="p-6 text-slate-500">Loading notifications...</div>;
   }
 
   if (error) {
     return (
-      <div className="p-6 text-red-500">
+      <div className="p-6 text-rose-500">
         Failed to load notifications
       </div>
     );
   }
 
-  const overdueTasks = tasks.filter(
-    (t) =>
-      t.dueDate &&
-      new Date(t.dueDate) < new Date() &&
-      t.status !== "COMPLETED"
-  );
+  // Group by date (Today vs Earlier) logic could be added here
+  // For now, let's show them in a simple list
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header */}
 
-      {/* Today Alerts */}
-      <div className="bg-white rounded-2xl p-6 space-y-4">
-        <h2 className="font-semibold">Today</h2>
+      <div className="bg-white rounded-2xl p-6 space-y-4 shadow-sm border border-slate-100">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-bold text-lg text-slate-800">Your Notifications</h2>
+        </div>
 
         {notifications.length === 0 ? (
-          <div className="text-gray-400 text-sm">
-            No notifications for today
+          <div className="text-slate-400 text-sm py-8 text-center italic">
+            You are all caught up! No new notifications. 🔔
           </div>
         ) : (
-          notifications.map((alert) => (
-            <AlertCard
-              key={alert.id}
-              title={alert.title}
-              time={alert.time}
-            />
-          ))
-        )}
-      </div>
-
-      {/* Overdue Tasks */}
-      <div className="bg-white rounded-2xl p-6">
-        <h2 className="font-semibold mb-4">Overdue Tasks</h2>
-
-        {overdueTasks.length === 0 ? (
-          <p className="text-gray-400 text-sm">
-            No overdue tasks
-          </p>
-        ) : (
-          <ul className="space-y-2 text-gray-600">
-            {overdueTasks.map((task) => (
-              <li key={task._id}>
-                • <b>{task.title}</b> is overdue
-              </li>
+          <div className="space-y-3">
+            {notifications.map((note) => (
+              <div
+                key={note._id}
+                onClick={() => handleNotificationClick(note)}
+              >
+                <AlertCard
+                  title={note.message}
+                  time={new Date(note.createdAt).toLocaleString()}
+                  type={note.type}
+                  isRead={note.isRead}
+                />
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
+
+      {selectedToken && (
+        <JoinWorkspaceModal
+          token={selectedToken}
+          onClose={() => setSelectedToken(null)}
+        />
+      )}
     </div>
   );
 }

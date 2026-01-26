@@ -3,6 +3,7 @@ import { UpdateUserProfileInput } from "../dtos/user.dto";
 import {
   updateUserById,
   findUserById,
+  findAllUsers as findAll,
 } from "../repositories/user.repository";
 import { IUser } from "../models/user.model";
 
@@ -52,4 +53,16 @@ export const updateProfile = async (
   }
 
   return user;
+};
+
+export const findAllUsers = async (currentUserId: string): Promise<IUser[]> => {
+  const user = await findUserById(currentUserId);
+  if (!user) return [];
+
+  // If no organization, only show yourself (Normal User privacy)
+  if (!user.organizationId) {
+    return [user];
+  }
+
+  return findAll(user.organizationId.toString());
 };

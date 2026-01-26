@@ -10,6 +10,9 @@ import userRoutes from "./routes/user.routes";
 import taskRoutes from "./routes/task.routes";
 import notificationRoutes from "./routes/notification.routes";
 import projectRoutes from "./routes/project.routes";
+import messageRoutes from "./routes/message.routes";
+import invitationRoutes from "./routes/invitation.routes";
+import aiRoutes from "./routes/ai.routes";
 
 const app = express();
 
@@ -18,6 +21,9 @@ app.set("trust proxy", 1);
 const allowedOrigins = [
   process.env.CLIENT_URL,      // https://www.tokoai.in
   "https://tokoai.in",
+
+  // "http://localhost:4000",
+  // "http://localhost:4173",
 ].filter(Boolean) as string[];
 
 app.use(
@@ -64,6 +70,9 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/tasks", taskRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/projects", projectRoutes);
+app.use("/api/v1/messages", messageRoutes);
+app.use("/api/v1/invitations", invitationRoutes);
+app.use("/api/v1/ai", aiRoutes);
 
 app.use(errorMiddleware);
 

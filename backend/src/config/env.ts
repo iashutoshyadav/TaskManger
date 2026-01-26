@@ -6,6 +6,7 @@ const requiredEnvVars = [
     "MONGO_URI",
     "JWT_SECRET",
     "CLIENT_URL",
+    "GEMINI_API_KEY",
 ] as const;
 
 requiredEnvVars.forEach((key) => {
@@ -23,5 +24,7 @@ export const env = {
     mongoUri: process.env.MONGO_URI!,
     jwtSecret: process.env.JWT_SECRET!,
     clientUrl: process.env.CLIENT_URL!,
+    geminiApiKey: process.env.GEMINI_API_KEY!,
     nodeEnv: process.env.NODE_ENV ?? "development",
+    adminEmails: (process.env.ADMIN_EMAILS ?? "").split(",").map(e => e.trim().toLowerCase()).filter(Boolean),
 };

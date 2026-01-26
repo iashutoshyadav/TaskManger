@@ -3,12 +3,16 @@ import { CreateProjectInput, UpdateProjectInput } from "../dtos/project.dto";
 import { CreateProjectDTO } from "../dtos/create-project.dto";
 import { ApiError } from "../utils/ApiError";
 import mongoose from "mongoose";
+import { findUserById } from "../repositories/user.repository";
 
 export const createNewProject = async (
   input: CreateProjectInput,
   userId: string
 ) => {
-  const data: CreateProjectDTO = {
+  const user = await findUserById(userId);
+  if (!user) throw ApiError.notFound("User not found");
+
+  const data: any = {
     title: input.title,
     description: input.description,
     requirements: input.requirements,
@@ -17,6 +21,7 @@ export const createNewProject = async (
     startDate: new Date(input.startDate),
     endDate: input.endDate ? new Date(input.endDate) : undefined,
     creatorId: new mongoose.Types.ObjectId(userId),
+    organizationId: user.organizationId,
   };
 
   return repo.createProject(data);
@@ -27,14 +32,19 @@ export const fetchUserProjects = async (
   page: number,
   limit: number
 ) => {
-  return repo.findProjectsByCreator(userId, page, limit);
+  const user = await findUserById(userId);
+  if (!user?.organizationId) {
+    return repo.findProjectsByOrganization("", page, limit); // Or handle empty
+  }
+  return repo.findProjectsByOrganization(user.organizationId.toString(), page, limit);
 };
 
 export const getProjectDetails = async (projectId: string, userId: string) => {
   const project = await repo.findProjectById(projectId);
   if (!project) throw ApiError.notFound("Project not found");
 
-  if (project.creatorId.toString() !== userId) {
+  const user = await findUserById(userId);
+  if (project.organizationId.toString() !== user?.organizationId?.toString()) {
     throw ApiError.forbidden("You do not have access to this project");
   }
 
@@ -64,7 +74,11 @@ export const deleteProject = async (projectId: string, userId: string) => {
   const project = await repo.findProjectById(projectId);
   if (!project) throw ApiError.notFound("Project not found");
 
-  if (project.creatorId.toString() !== userId) {
+  const user = await findUserById(userId);
+  const isCreator = project.creatorId.toString() === userId;
+  const isAdmin = user?.role === "ADMIN";
+
+  if (!isCreator && !isAdmin) {
     throw ApiError.forbidden("You do not have permission to delete this project");
   }
 

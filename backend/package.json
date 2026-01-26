@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie": "^0.6.0",
     "@types/cookie-parser": "^1.4.10",
@@ -17,7 +18,7 @@
     "@types/morgan": "^1.9.10",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
-    "dotenv": "^17.2.3",
+    "dotenv": "^16.4.7",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.0.1",

@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
 import * as repo from "../repositories/task.repository";
+import * as notificationService from "./notification.service";
 import { getIO } from "../config/socket";
 import { TaskStatus, TaskPriority } from "../models/task.model";
 import { CreateTaskInput, UpdateTaskInput } from "../dtos/task.dto";
 import { ApiError } from "../utils/ApiError";
+import { findUserById } from "../repositories/user.repository";
 
 /* ================= UTIL ================= */
 
@@ -40,7 +42,10 @@ export const createNewTask = async (
     assignedToId = new mongoose.Types.ObjectId(id);
   }
 
-  const task = await repo.createTask({
+  const user = await findUserById(userId);
+  if (!user) throw ApiError.notFound("User not found");
+
+  const task = (await repo.createTask({
     title: input.title,
     description: input.description,
     priority: input.priority || TaskPriority.MEDIUM,
@@ -48,13 +53,21 @@ export const createNewTask = async (
     dueDate,
     creatorId: new mongoose.Types.ObjectId(userId),
     assignedToId,
-  });
+    organizationId: user.organizationId,
+  })) as any;
 
   const io = getIO();
   io.to(userId).emit("task:created", task);
 
   if (assignedToId) {
     io.to(assignedToId.toString()).emit("task:assigned", task);
+
+    // Create persistent notification
+    await notificationService.notifyTaskAssignment(
+      assignedToId.toString(),
+      task._id.toString(),
+      task.title
+    );
   }
 
   return task;
@@ -143,9 +156,11 @@ export const deleteTask = async (
     ? getObjectId(task.assignedToId)
     : null;
 
-  const canDelete = creatorId === userId; // Usually only creator can delete
+  const user = await findUserById(userId);
+  const isCreator = creatorId === userId;
+  const isAdmin = user?.role === "ADMIN";
 
-  if (!canDelete) {
+  if (!isCreator && !isAdmin) {
     throw ApiError.forbidden("You do not have permission to delete this task");
   }
 
@@ -162,19 +177,26 @@ export const deleteTask = async (
 
 export const fetchTasks = async ({
   userId,
+  projectId,
   status,
   priority,
   page,
   limit,
 }: {
   userId: string;
+  projectId?: string;
   status?: TaskStatus;
   priority?: TaskPriority;
   page: number;
   limit: number;
 }) => {
+  const user = await findUserById(userId);
+  const organizationId = user?.organizationId?.toString();
+
   const { tasks, total } = await repo.findTasksForUser({
     userId,
+    organizationId,
+    projectId,
     status,
     priority,
     page,

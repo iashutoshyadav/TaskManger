@@ -11,7 +11,7 @@ export default function Topbar() {
     if (location.pathname === "/dashboard") return `Welcome back, ${user?.name?.split(' ')[0] || 'Partner'}! 👋`;
     if (location.pathname.includes("/dashboard/projects")) return "Projects Portfolio";
     if (location.pathname.includes("/dashboard/tasks")) return "Task Management";
-    if (location.pathname.includes("/dashboard/chat")) return "AI Assistant";
+    if (location.pathname.includes("/dashboard/chat")) return "Team Chat";
     if (location.pathname.includes("/dashboard/summary")) return "Analytics Overview";
     if (location.pathname.includes("/dashboard/calendar")) return "Schedule";
     if (location.pathname.includes("/dashboard/notifications")) return "Notifications";
@@ -64,31 +64,33 @@ export default function Topbar() {
         </div>
 
         {/* Create Button */}
-        <button
-          onClick={() => {
-            if (location.pathname.includes("/dashboard/projects")) {
-              navigate("/dashboard/projects?new=true");
-            } else if (location.pathname.includes("/dashboard/calendar")) {
-              // No action for now
-            } else {
-              navigate("/dashboard/tasks/new");
-            }
-          }}
-          className="btn-primary flex items-center gap-2"
-        >
-          {location.pathname.includes("/dashboard/projects") ? (
-            "+ Establish Project"
-          ) : location.pathname.includes("/dashboard/summary") ? (
-            <>
-              <Download size={18} />
-              Export Data
-            </>
-          ) : location.pathname.includes("/dashboard/calendar") ? (
-            "Schedule Task"
-          ) : (
-            "+ New Task"
-          )}
-        </button>
+        {(location.pathname.includes("/dashboard/projects") && user?.role !== 'ADMIN') ? null : (
+          <button
+            onClick={() => {
+              if (location.pathname.includes("/dashboard/projects")) {
+                navigate("/dashboard/projects?new=true");
+              } else if (location.pathname.includes("/dashboard/calendar")) {
+                // No action for now
+              } else {
+                navigate("/dashboard/tasks/new");
+              }
+            }}
+            className="btn-primary flex items-center gap-2"
+          >
+            {location.pathname.includes("/dashboard/projects") ? (
+              "+ Establish Project"
+            ) : location.pathname.includes("/dashboard/summary") ? (
+              <>
+                <Download size={18} />
+                Export Data
+              </>
+            ) : location.pathname.includes("/dashboard/calendar") ? (
+              "Schedule Task"
+            ) : (
+              "+ New Task"
+            )}
+          </button>
+        )}
       </div>
     </div>
   );

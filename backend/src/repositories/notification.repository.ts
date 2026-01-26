@@ -4,7 +4,10 @@ import { NotificationModel, INotification } from "../models/notification.model";
 export const createNotification = async (
   data: {
     receiverId: mongoose.Types.ObjectId;
-    taskId: mongoose.Types.ObjectId;
+    type: string;
+    taskId?: mongoose.Types.ObjectId;
+    inviteId?: mongoose.Types.ObjectId;
+    inviteToken?: string;
     message: string;
   }
 ): Promise<INotification> => {

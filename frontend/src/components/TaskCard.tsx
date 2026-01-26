@@ -5,6 +5,7 @@ type Props = {
   task: Task;
   onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
+  canDelete?: boolean;
 };
 
 const PRIORITY_STYLES: Record<string, string> = {
@@ -19,7 +20,7 @@ const STATUS_STYLES: Record<string, string> = {
   COMPLETED: "bg-emerald-50 text-emerald-600 border-emerald-100",
 };
 
-export default function TaskCard({ task, onEdit, onDelete }: Props) {
+export default function TaskCard({ task, onEdit, onDelete, canDelete }: Props) {
   const assignedUser =
     typeof task.assignedToId === "object"
       ? task.assignedToId?.name
@@ -53,13 +54,15 @@ export default function TaskCard({ task, onEdit, onDelete }: Props) {
             >
               <Pencil size={14} />
             </button>
-            <button
-              onClick={() => onDelete(task._id)}
-              className="p-1.5 rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all font-bold"
-              title="Delete Task"
-            >
-              <Trash2 size={14} />
-            </button>
+            {canDelete && (
+              <button
+                onClick={() => onDelete(task._id)}
+                className="p-1.5 rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all font-bold"
+                title="Delete Task"
+              >
+                <Trash2 size={14} />
+              </button>
+            )}
           </div>
         </div>
 

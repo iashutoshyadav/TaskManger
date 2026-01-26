@@ -1,25 +1,38 @@
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useProjects } from "@/hooks/useProjects";
 import ProjectForm from "@/components/ProjectForm";
 import Loader from "@/components/Loader";
-import { Briefcase, Users, FileText, Calendar, Search, Filter } from "lucide-react";
-import { ProjectStatus } from "@/types/project";
+import { Briefcase, Users, FileText, Calendar, Search, Filter, Trash2, Edit2 } from "lucide-react";
+import { Project, ProjectStatus } from "@/types/project";
+import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
 
 export default function Projects() {
+    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const showForm = searchParams.get("new") === "true";
-    const { projects, isLoading, createProject } = useProjects();
+    const [editingProject, setEditingProject] = useState<Project | null>(null);
+    const { projects, isLoading, createProject, updateProject, deleteProject } = useProjects();
+    const { user } = useAuth({ enabled: false });
 
     const handleCreate = async (data: any) => {
         try {
-            await createProject(data);
-            setSearchParams({});
+            if (editingProject) {
+                await updateProject(editingProject._id, data);
+                setEditingProject(null);
+            } else {
+                await createProject(data);
+                setSearchParams({});
+            }
         } catch (error) {
-            console.error("Failed to create project", error);
+            console.error("Failed to save project", error);
         }
     };
 
-    const onClose = () => setSearchParams({});
+    const onClose = () => {
+        setSearchParams({});
+        setEditingProject(null);
+    };
 
     const getStatusColor = (status: ProjectStatus) => {
         switch (status) {
@@ -59,15 +72,39 @@ export default function Projects() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {projects.map((project) => (
+                    {projects.map((project: Project) => (
                         <div key={project._id} className="glass-card group hover:border-brand/30 transition-all duration-300 flex flex-col justify-between">
                             <div>
                                 <div className="flex justify-between items-start mb-4">
                                     <div className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ring-1 ring-inset ${getStatusColor(project.status)}`}>
                                         {project.status}
                                     </div>
-                                    <div className="bg-slate-50 p-2 rounded-xl text-slate-400 group-hover:bg-brand/5 group-hover:text-brand transition-colors">
-                                        <Briefcase size={18} />
+                                    <div className="flex items-center gap-2">
+                                        <div className="bg-slate-50 p-2 rounded-xl text-slate-400 group-hover:bg-brand/5 group-hover:text-brand transition-colors">
+                                            <Briefcase size={18} />
+                                        </div>
+                                        {(user?.role === "ADMIN" || project.creatorId === user?.id) && (
+                                            <div className="flex items-center gap-1">
+                                                <button
+                                                    onClick={() => setEditingProject(project)}
+                                                    className="p-2 rounded-xl text-slate-300 hover:bg-brand/5 hover:text-brand transition-all font-bold"
+                                                    title="Edit Project"
+                                                >
+                                                    <Edit2 size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        if (confirm("Permanently remove this project and all associated data?")) {
+                                                            deleteProject(project._id);
+                                                        }
+                                                    }}
+                                                    className="p-2 rounded-xl text-slate-300 hover:bg-rose-50 hover:text-rose-600 transition-all font-bold"
+                                                    title="Delete Project"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand transition-colors line-clamp-1">{project.title}</h3>
@@ -92,7 +129,10 @@ export default function Projects() {
                                 </div>
                             </div>
 
-                            <button className="w-full mt-6 py-3 border border-slate-100 rounded-xl text-xs font-bold text-brand hover:bg-brand hover:text-white transition-all uppercase tracking-widest">
+                            <button
+                                onClick={() => navigate(`/dashboard/tasks?projectId=${project._id}`)}
+                                className="w-full mt-6 py-3 border border-slate-100 rounded-xl text-xs font-bold text-brand hover:bg-brand hover:text-white transition-all uppercase tracking-widest"
+                            >
                                 View Portfolio Details
                             </button>
                         </div>
@@ -100,8 +140,9 @@ export default function Projects() {
                 </div>
             )}
 
-            {showForm && (
+            {(showForm || editingProject) && (
                 <ProjectForm
+                    project={editingProject ?? undefined}
                     onClose={onClose}
                     onSubmit={handleCreate}
                     loading={isLoading}

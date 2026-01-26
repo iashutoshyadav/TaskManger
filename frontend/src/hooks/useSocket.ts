@@ -20,6 +20,7 @@ export const useSocket = ({ enabled }: { enabled: boolean }) => {
     socket.on("task:created", invalidateTasks);
     socket.on("task:updated", invalidateTasks);
     socket.on("task:deleted", invalidateTasks);
+    socket.on("task:assigned", invalidateTasks);
 
     socket.on("notification:new", invalidateNotifications);
 
@@ -27,6 +28,7 @@ export const useSocket = ({ enabled }: { enabled: boolean }) => {
       socket.off("task:created", invalidateTasks);
       socket.off("task:updated", invalidateTasks);
       socket.off("task:deleted", invalidateTasks);
+      socket.off("task:assigned", invalidateTasks);
       socket.off("notification:new", invalidateNotifications);
       // ❌ DO NOT disconnect socket globally
     };

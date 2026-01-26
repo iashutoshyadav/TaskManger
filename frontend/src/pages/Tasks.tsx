@@ -4,6 +4,7 @@ import TaskForm from "@/components/TaskForm";
 import TaskCard from "@/components/TaskCard";
 import { useTasks } from "@/hooks/useTasks";
 import { Task } from "@/types/task";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Tasks() {
   const [params] = useSearchParams();
@@ -19,7 +20,12 @@ export default function Tasks() {
   } = useTasks({
     page: 1,
     limit: 20,
+    filters: {
+      projectId: params.get("projectId") || undefined,
+    }
   });
+
+  const { user } = useAuth({ enabled: false });
 
   const myTasks: Task[] = tasks;
 
@@ -69,6 +75,7 @@ export default function Tasks() {
                 key={task._id}
                 task={task}
                 onEdit={(t) => setEditingTask(t)}
+                canDelete={user?.role === "ADMIN" || task.creatorId._id === user?.id}
                 onDelete={(id) => {
                   if (confirm("Delete this task?")) {
                     deleteTask(id);

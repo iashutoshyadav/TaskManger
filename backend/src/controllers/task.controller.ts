@@ -24,7 +24,7 @@ export const updateTask = async (
   next: NextFunction
 ) => {
   try {
-    console.log("UPDATE BODY:", req.body); 
+    console.log("UPDATE BODY:", req.body);
     const data = UpdateTaskDto.parse(req.body);
     const task = await taskService.updateTask(
       req.params.id,
@@ -61,6 +61,7 @@ export const getTasks = async (
 
     const result = await taskService.fetchTasks({
       userId: req.userId!,
+      projectId: req.query.projectId as string,
       status: req.query.status as any,
       priority: req.query.priority as any,
       page,

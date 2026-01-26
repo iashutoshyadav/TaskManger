@@ -8,21 +8,21 @@ export const createProject = async (
   return ProjectModel.create(data);
 };
 
-export const findProjectsByCreator = async (
-  creatorId: string,
+export const findProjectsByOrganization = async (
+  organizationId: string,
   page: number,
   limit: number
 ): Promise<{ projects: IProject[]; total: number }> => {
   const skip = (page - 1) * limit;
-  const creatorObjectId = new mongoose.Types.ObjectId(creatorId);
+  const orgObjectId = new mongoose.Types.ObjectId(organizationId);
 
   const [projects, total] = await Promise.all([
-    ProjectModel.find({ creatorId: creatorObjectId })
+    ProjectModel.find({ organizationId: orgObjectId })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean<IProject[]>(),
-    ProjectModel.countDocuments({ creatorId: creatorObjectId }),
+    ProjectModel.countDocuments({ organizationId: orgObjectId }),
   ]);
 
   return { projects, total };

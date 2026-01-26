@@ -1,10 +1,11 @@
 import { useTasks } from "@/hooks/useTasks";
-import { useAuth } from "@/hooks/useAuth";
 import { Task } from "@/types/task";
 import { Play, Pause, Square, TrendingUp, Clock, CheckCircle2 } from "lucide-react";
+import { useTimer } from "@/context/TimerContext";
 
 export default function Home() {
   const { tasks, isLoading } = useTasks({ page: 1, limit: 20 });
+  const { activeTask, seconds, isRunning, startTask, pauseTask, stopTask, formatTime } = useTimer();
 
   const myTasks: Task[] = tasks || [];
 
@@ -16,6 +17,7 @@ export default function Home() {
     myTasks.length === 0
       ? 0
       : Math.round((completed / myTasks.length) * 100);
+
 
   if (isLoading) {
     return (
@@ -134,17 +136,43 @@ export default function Home() {
             </div>
             <div className="relative z-10">
               <h3 className="font-bold opacity-70 uppercase tracking-widest text-[10px]">Active Tracker</h3>
-              <h2 className="text-4xl font-mono font-bold mt-4 tracking-tighter">01:24:08</h2>
-              <p className="text-sm font-medium opacity-60 mt-1">Design System Sync</p>
 
-              <div className="flex gap-3 mt-8">
-                <button className="flex-1 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-colors">
-                  <Pause size={20} />
-                </button>
-                <button className="flex-1 h-12 bg-rose-500 hover:bg-rose-600 rounded-xl flex items-center justify-center transition-colors shadow-lg shadow-rose-500/20">
-                  <Square size={20} fill="currentColor" />
-                </button>
-              </div>
+              {activeTask ? (
+                <>
+                  <h2 className="text-4xl font-mono font-bold mt-4 tracking-tighter">{formatTime(seconds)}</h2>
+                  <p className="text-sm font-medium opacity-60 mt-1 truncate pr-8">{activeTask.title}</p>
+
+                  <div className="flex gap-3 mt-8">
+                    {isRunning ? (
+                      <button
+                        onClick={pauseTask}
+                        className="flex-1 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-colors"
+                      >
+                        <Pause size={20} />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => startTask(activeTask)}
+                        className="flex-1 h-12 bg-white/20 hover:bg-white/30 rounded-xl flex items-center justify-center transition-colors"
+                      >
+                        <Play size={20} fill="currentColor" />
+                      </button>
+                    )}
+
+                    <button
+                      onClick={stopTask}
+                      className="flex-1 h-12 bg-rose-500 hover:bg-rose-600 rounded-xl flex items-center justify-center transition-colors shadow-lg shadow-rose-500/20"
+                    >
+                      <Square size={20} fill="currentColor" />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 opacity-70">
+                  <p className="text-sm">No task active</p>
+                  <p className="text-xs opacity-60 mt-1">Select a task to start tracking</p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -156,11 +184,20 @@ export default function Home() {
             <div className="space-y-4">
               {myTasks.slice(0, 3).map((task, i) => (
                 <div key={i} className="flex items-start gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors group">
-                  <div className={`h-10 w-10 shrink-0 rounded-xl flex items-center justify-center text-white ${task.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-brand'
-                    }`}>
-                    {task.status === 'COMPLETED' ? <CheckCircle2 size={20} /> : <Play size={18} fill="currentColor" />}
-                  </div>
-                  <div className="min-w-0">
+                  <button
+                    onClick={() => startTask(task)}
+                    className={`h-10 w-10 shrink-0 rounded-xl flex items-center justify-center text-white transition-colors ${activeTask?._id === task._id && isRunning
+                        ? 'bg-amber-400 animate-pulse'
+                        : (task.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-brand')
+                      }`}
+                  >
+                    {activeTask?._id === task._id && isRunning ? (
+                      <TrendingUp size={18} />
+                    ) : (
+                      task.status === 'COMPLETED' ? <CheckCircle2 size={20} /> : <Play size={18} fill="currentColor" />
+                    )}
+                  </button>
+                  <div className="min-w-0 flex-1 cursor-pointer">
                     <p className="text-sm font-bold text-slate-800 truncate group-hover:text-brand transition-colors">{task.title}</p>
                     <p className="text-xs text-slate-400 mt-1 font-medium">
                       Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No date'}

@@ -1,6 +1,6 @@
 import { Response, NextFunction } from "express";
 import { AuthRequest } from "../middlewares/auth.middleware";
-import * as notificationService from "../services/notificatiom.services";
+import * as notificationService from "../services/notification.service";
 
 /* ===========================
    GET ALL NOTIFICATIONS

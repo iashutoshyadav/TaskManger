@@ -1,9 +1,18 @@
 import mongoose, { Document, Schema } from "mongoose";
 
+export enum UserRole {
+  ADMIN = "ADMIN",
+  MEMBER = "MEMBER",
+  GUEST = "GUEST",
+}
+
 export interface IUser extends Document {
   name: string;
   email: string;
   password?: string;
+  role: UserRole;
+  organizationId?: mongoose.Types.ObjectId;
+  userType: "INDIVIDUAL" | "BUSINESS";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,6 +34,22 @@ const UserSchema = new Schema<IUser>(
       trim: true,
       match: [/^\S+@\S+\.\S+$/, "Invalid email address"],
       index: true,
+    },
+    role: {
+      type: String,
+      enum: Object.values(UserRole),
+      default: UserRole.MEMBER,
+    },
+    organizationId: {
+      type: Schema.Types.ObjectId,
+      ref: "Organization",
+      default: null,
+      index: true,
+    },
+    userType: {
+      type: String,
+      enum: ["INDIVIDUAL", "BUSINESS"],
+      default: "INDIVIDUAL",
     },
     password: {
       type: String,

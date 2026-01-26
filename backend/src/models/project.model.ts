@@ -17,6 +17,7 @@ export interface IProject {
   startDate: Date;
   endDate?: Date;
   creatorId: mongoose.Types.ObjectId;
+  organizationId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,6 +38,12 @@ const ProjectSchema = new Schema<IProject>(
     creatorId: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required: true,
+      index: true,
+    },
+    organizationId: {
+      type: Schema.Types.ObjectId,
+      ref: "Organization",
       required: true,
       index: true,
     },
