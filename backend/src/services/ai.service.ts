@@ -4,7 +4,6 @@ import { ApiError } from "../utils/ApiError";
 import { logger } from "../utils/logger";
 
 const genAI = new GoogleGenerativeAI(env.geminiApiKey);
-// Using gemini-2.0-flash as it's the most stable and widely available
 const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
 const generateWithRetry = async (prompt: string, retries = 3, delayMs = 2000): Promise<any> => {
@@ -16,9 +15,13 @@ const generateWithRetry = async (prompt: string, retries = 3, delayMs = 2000): P
             const isServerOverload = error?.status === 503 || error?.response?.status === 503;
 
             if ((isRateLimit || isServerOverload) && i < retries - 1) {
-                logger.warn(`AI Rate Limit hit. Retrying in ${delayMs}ms... (Attempt ${i + 1}/${retries})`);
-                await new Promise(resolve => setTimeout(resolve, delayMs));
-                continue; // Retry
+                const backoffTime = delayMs * Math.pow(2, i);
+                const jitter = Math.floor(Math.random() * 500);
+                const totalDelay = backoffTime + jitter;
+
+                logger.warn(`AI Rate Limit hit. Retrying in ${totalDelay}ms... (Attempt ${i + 1}/${retries})`);
+                await new Promise(resolve => setTimeout(resolve, totalDelay));
+                continue;
             }
             throw error;
         }
@@ -40,9 +43,7 @@ export interface AIWorkspaceResponse {
     }[];
 }
 
-/**
- * Generate a complete project structure based on a user goal
- */
+
 export const generateWorkspaceStructure = async (goal: string): Promise<AIWorkspaceResponse> => {
     const prompt = `
         You are a senior project manager and workspace architect.
@@ -83,7 +84,7 @@ export const generateWorkspaceStructure = async (goal: string): Promise<AIWorksp
         const text = result.response.text();
         logger.info("AI Generation Success for goal: %s", goal);
 
-        // Clean markdown if AI includes it
+
         const cleaned = text.replace(/```json/g, "").replace(/```/g, "").trim();
         return JSON.parse(cleaned) as AIWorkspaceResponse;
     } catch (error: any) {
@@ -98,9 +99,7 @@ export const generateWorkspaceStructure = async (goal: string): Promise<AIWorksp
     }
 };
 
-/**
- * Generate a daily standup summary
- */
+
 export const generateDailyStandup = async (
     teamChat: string[],
     stats: { total: number; completed: number; overdue: number }
@@ -132,9 +131,7 @@ export const generateDailyStandup = async (
     }
 };
 
-/**
- * Enhance a single task based on its title
- */
+
 export const enhanceTaskDetails = async (title: string): Promise<{
     description: string;
     priority: "LOW" | "MEDIUM" | "HIGH";
@@ -172,7 +169,7 @@ export const enhanceTaskDetails = async (title: string): Promise<{
             throw ApiError.internal("AI Service is currently busy (Rate Limit). Please try again in a few seconds.");
         }
 
-        // Log the full error object
+
         logger.error("AI Enhance Full Error: %j", {
             message: error?.message,
             status: error?.status,

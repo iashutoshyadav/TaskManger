@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Mail, Lock, User, ArrowRight, Sparkles } from "lucide-react";
 import JoinWorkspaceModal from "@/components/JoinWorkspaceModal";
 
-const Register = () => {
+const Register = ({ onSwitchToLogin }: { onSwitchToLogin?: () => void }) => {
   const { register, user } = useAuth({ enabled: false });
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -53,7 +53,7 @@ const Register = () => {
         <div className="glass-card border-none shadow-2xl shadow-gray-200/60 p-10">
           <div className="text-center mb-0">
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center justify-center gap-2">
-              Join Toko.io
+              Join Toko
               <Sparkles className="text-brand" size={24} />
             </h1>
           </div>
@@ -144,9 +144,18 @@ const Register = () => {
           </div>
           <p className="text-sm text-center mt-5 text-slate-600 font-medium">
             Already an Toko?{" "}
-            <Link to="/login" className="text-brand font-bold hover:underline">
-              Sign In Instead
-            </Link>
+            {onSwitchToLogin ? (
+              <button
+                onClick={onSwitchToLogin}
+                className="text-brand font-bold hover:underline"
+              >
+                Sign In Instead
+              </button>
+            ) : (
+              <Link to="/login" className="text-brand font-bold hover:underline">
+                Sign In Instead
+              </Link>
+            )}
           </p>
         </div>
       </div>

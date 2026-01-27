@@ -8,7 +8,6 @@ import * as messageService from "../services/message.service";
 import { findUserById } from "../repositories/user.repository";
 
 let io: Server;
-
 export const initSocket = (httpServer: HttpServer): Server => {
   io = new Server(httpServer, {
     cors: {
@@ -19,7 +18,6 @@ export const initSocket = (httpServer: HttpServer): Server => {
       credentials: true,
     },
   });
-
   io.use((socket: Socket, next) => {
     try {
       const cookies = socket.handshake.headers.cookie;
@@ -33,11 +31,8 @@ export const initSocket = (httpServer: HttpServer): Server => {
       if (!token) {
         return next(new Error("Auth token missing"));
       }
-
       const payload = verifyToken(token);
       socket.data.userId = payload.userId;
-
-      // Fetch organizationId for rooms
       findUserById(payload.userId).then(user => {
         if (user?.organizationId) {
           socket.data.organizationId = user.organizationId.toString();
@@ -73,22 +68,15 @@ export const initSocket = (httpServer: HttpServer): Server => {
     socket.on("chat:message", async (data: { text: string }) => {
       try {
         if (!data.text || !data.text.trim()) return;
-        if (!orgId) return; // Cannot chat without an organization
-
-        // Save to DB
+        if (!orgId) return;
         const message = await messageService.saveMessage(userId, orgId, data.text);
-
-        // Populate sender info for frontend
         await message.populate("senderId", "name email");
-
         const payload = {
           id: message._id,
           text: message.content,
-          senderId: message.senderId, // Full object due to populate
+          senderId: message.senderId,
           createdAt: message.createdAt,
         };
-
-        // Broadcast ONLY to the organization's room
         io.to(`org:${orgId}`).emit("chat:receive", payload);
       } catch (err) {
         logger.error("Chat message error", err);

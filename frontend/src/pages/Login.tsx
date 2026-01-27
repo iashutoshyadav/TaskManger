@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Mail, Lock, ArrowRight, Github } from "lucide-react";
 
-const Login = () => {
+const Login = ({ onSwitchToRegister }: { onSwitchToRegister?: () => void }) => {
   const { login } = useAuth({ enabled: false });
   const navigate = useNavigate();
 
@@ -136,10 +136,19 @@ const Login = () => {
 
           {/* BOTTOM TEXT — CENTERED */}
           <p className="text-sm text-center mt-5 text-slate-500 font-medium">
-            New to Toko.io?{" "}
-            <Link to="/register" className="text-brand font-bold hover:underline">
-              Initiate Account
-            </Link>
+            New to Toko?{" "}
+            {onSwitchToRegister ? (
+              <button
+                onClick={onSwitchToRegister}
+                className="text-brand font-bold hover:underline"
+              >
+                Initiate Account
+              </button>
+            ) : (
+              <Link to="/register" className="text-brand font-bold hover:underline">
+                Initiate Account
+              </Link>
+            )}
           </p>
         </div>
       </div>

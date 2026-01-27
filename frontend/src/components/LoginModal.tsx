@@ -1,8 +1,7 @@
 import Login from "@/pages/Login";
 
-const LoginModal = ({ onClose }: { onClose: () => void }) => {
+const LoginModal = ({ onClose, onSwitchToRegister }: { onClose: () => void; onSwitchToRegister?: () => void }) => {
     const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        // Only close if clicking the backdrop itself, not the modal content
         if (e.target === e.currentTarget) {
             onClose();
         }
@@ -15,7 +14,7 @@ const LoginModal = ({ onClose }: { onClose: () => void }) => {
         >
             {/* MODAL */}
             <div className="relative w-full max-w-md">
-                <Login />
+                <Login onSwitchToRegister={onSwitchToRegister} />
             </div>
         </div>
     );

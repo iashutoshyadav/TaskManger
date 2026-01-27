@@ -6,7 +6,6 @@ type Props = {
 };
 
 export default function PerformanceChart({ tasks: _tasks }: Props) {
-    // Group tasks by creation date (last 7 days for demo)
     const data = [
         { name: "Mon", tasks: 4 },
         { name: "Tue", tasks: 7 },

@@ -8,13 +8,11 @@ const requiredEnvVars = [
     "CLIENT_URL",
     "GEMINI_API_KEY",
 ] as const;
-
 requiredEnvVars.forEach((key) => {
     if (!process.env[key]) {
         throw new Error(`Missing required environment variable: ${key}`);
     }
 });
-
 const port = Number(process.env.PORT);
 if (!Number.isInteger(port) || port <= 0) {
     throw new Error("PORT must be a valid positive number");

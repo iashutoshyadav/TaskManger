@@ -21,7 +21,6 @@ export default function InviteModal({ onClose }: Props) {
 
         try {
             const { invitation } = await createInvitation(email);
-            // Constructing the link based on current location
             const link = `${window.location.origin}/register?invite=${invitation.token}`;
             setInviteLink(link);
             setSuccess(true);

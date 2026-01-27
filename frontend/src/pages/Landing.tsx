@@ -67,7 +67,7 @@ export default function Landing() {
             <div className="h-10 w-10 bg-brand rounded-2xl flex items-center justify-center shadow-lg shadow-brand/20">
               <span className="text-white font-black text-xl">T</span>
             </div>
-            <span className="text-lg font-black tracking-tight text-slate-900">toko.io</span>
+            <span className="text-lg font-black tracking-tight text-slate-900">toko</span>
           </div>
 
           <div className="hidden md:flex items-center gap-8 mr-auto ml-12">
@@ -76,10 +76,6 @@ export default function Landing() {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* <Link to="/login" className="text-sm font-bold text-slate-600 hover:text-brand transition-colors">
-              Sign In
-            </Link> */}
-
             <button
               onClick={() => setShowLogin(true)}
               className="text-sm font-bold text-slate-600 hover:text-brand"
@@ -312,7 +308,7 @@ export default function Landing() {
               <div className="h-7 w-7 bg-brand rounded-lg flex items-center justify-center">
                 <span className="text-white font-black text-xs">T</span>
               </div>
-              <span className="text-sm font-black">toko.io</span>
+              <span className="text-sm font-black">toko</span>
             </div>
 
             {/* Links */}
@@ -337,10 +333,26 @@ export default function Landing() {
       </footer>
 
       {/* LOGIN MODAL */}
-      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+      {showLogin && (
+        <LoginModal
+          onClose={() => setShowLogin(false)}
+          onSwitchToRegister={() => {
+            setShowLogin(false);
+            setShowRegister(true);
+          }}
+        />
+      )}
 
       {/* REGISTER MODAL */}
-      {showRegister && <RegisterModal onClose={() => setShowRegister(false)} />}
+      {showRegister && (
+        <RegisterModal
+          onClose={() => setShowRegister(false)}
+          onSwitchToLogin={() => {
+            setShowRegister(false);
+            setShowLogin(true);
+          }}
+        />
+      )}
 
     </div>
   );

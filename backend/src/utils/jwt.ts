@@ -11,7 +11,18 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is not defined");
 }
 
-export const signToken = (userId: string): string => {
+export const signAccessToken = (userId: string): string => {
+  return jwt.sign(
+    { userId },
+    JWT_SECRET,
+    {
+      expiresIn: "15m",
+      algorithm: "HS256",
+    }
+  );
+};
+
+export const signRefreshToken = (userId: string): string => {
   return jwt.sign(
     { userId },
     JWT_SECRET,

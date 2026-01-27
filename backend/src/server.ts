@@ -22,9 +22,7 @@ const startServer = async () => {
       logger.info(`Server running on port ${env.port}`);
     });
 
-    /**
-     * Graceful shutdown
-     */
+
     const shutdown = async (signal: string) => {
       logger.warn(`Received ${signal}. Shutting down gracefully...`);
       server.close(() => {

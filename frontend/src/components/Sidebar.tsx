@@ -39,22 +39,9 @@ export default function Sidebar({ className = "", onClose }: SidebarProps) {
           T
         </div>
         <span className="text-xl font-bold tracking-tight text-brand">
-          Toko.io
+          Toko
         </span>
       </div>
-
-
-      {/* SEARCH */}
-      {/* <div className="px-4 pb-3">
-        <div className="flex items-center gap-2 bg-gray-100 rounded-xl px-3 py-2">
-          <Search size={16} className="text-gray-400" />
-          <input
-            placeholder="Search"
-            className="bg-transparent outline-none text-sm w-full text-gray-600 placeholder-gray-400"
-          />
-        </div>
-      </div> */}
-
       {/* MENU */}
       <nav className="flex flex-col gap-2 px-4 flex-1">
         <NavLink

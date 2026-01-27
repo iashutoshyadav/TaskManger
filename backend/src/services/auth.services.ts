@@ -1,7 +1,7 @@
 import { RegisterInput, LoginInput } from "../dtos/auth.dto";
 import { createUser, findUserByEmail } from "../repositories/user.repository";
 import { hashPassword, comparePassword } from "../utils/password";
-import { signToken } from "../utils/jwt";
+import { signAccessToken, signRefreshToken } from "../utils/jwt";
 import { IUser, UserRole } from "../models/user.model";
 import { createOrganization } from "../repositories/organization.repository";
 import { findInvitationByToken, updateInvitationStatus } from "../repositories/invitation.repository";
@@ -11,7 +11,8 @@ import { env } from "../config/env";
 
 type AuthResponse = {
   user: Omit<IUser, "password">;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 };
 
 export const registerUser = async (
@@ -63,11 +64,12 @@ export const registerUser = async (
     await user.save();
   }
 
-  const token = signToken(user._id.toString());
+  const accessToken = signAccessToken(user._id.toString());
+  const refreshToken = signRefreshToken(user._id.toString());
   const obj = user.toObject();
   delete obj.password;
 
-  return { user: obj, token };
+  return { user: obj, accessToken, refreshToken };
 };
 
 export const loginUser = async (
@@ -90,9 +92,10 @@ export const loginUser = async (
     await user.save();
   }
 
-  const token = signToken(user._id.toString());
+  const accessToken = signAccessToken(user._id.toString());
+  const refreshToken = signRefreshToken(user._id.toString());
   const obj = user.toObject();
   delete obj.password;
 
-  return { user: obj, token };
+  return { user: obj, accessToken, refreshToken };
 };

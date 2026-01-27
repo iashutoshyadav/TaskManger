@@ -34,7 +34,6 @@ export default function JoinWorkspaceModal({ token, onClose }: Props) {
             setSuccess(true);
             setTimeout(() => {
                 onClose();
-                // Redirect to dashboard to refresh state
                 window.location.href = "/dashboard";
             }, 2000);
         } catch (err: any) {

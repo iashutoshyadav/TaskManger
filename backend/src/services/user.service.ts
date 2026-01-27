@@ -58,8 +58,6 @@ export const updateProfile = async (
 export const findAllUsers = async (currentUserId: string): Promise<IUser[]> => {
   const user = await findUserById(currentUserId);
   if (!user) return [];
-
-  // If no organization, only show yourself (Normal User privacy)
   if (!user.organizationId) {
     return [user];
   }

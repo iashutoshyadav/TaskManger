@@ -100,30 +100,66 @@ export default function Home() {
             </div>
 
             <div className="relative z-10 flex items-end justify-between h-full px-4">
-              {[
-                { d: "Mon", h: "45%", t: "plan" },
-                { d: "Tue", h: "70%", t: "done" },
-                { d: "Wed", h: "55%", t: "prog" },
-                { d: "Thu", h: "85%", t: "done" },
-                { d: "Fri", h: "65%", t: "prog" },
-                { d: "Sat", h: "40%", t: "plan" },
-                { d: "Sun", h: "30%", t: "plan" },
-              ].map((b, i) => (
-                <div key={i} className="flex flex-col items-center gap-3 w-full group">
-                  <div className="relative h-48 w-full flex items-end justify-center">
-                    <div
-                      className={`w-10 rounded-t-xl transition-all duration-500 group-hover:w-12 ${b.t === 'done' ? 'bg-brand shadow-lg shadow-brand/20' :
-                        b.t === 'prog' ? 'bg-accent' : 'bg-slate-200'
-                        }`}
-                      style={{ height: b.h }}
-                    />
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                      {b.h}
+              {(() => {
+                const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                const today = new Date();
+                const last7Days = Array.from({ length: 7 }, (_, i) => {
+                  const d = new Date(today);
+                  d.setDate(d.getDate() - (6 - i));
+                  return d;
+                });
+
+                // 1. Group tasks by day
+                const dailyStats = last7Days.map(date => {
+                  const dateStr = date.toISOString().split('T')[0];
+                  const dayTasks = myTasks.filter(t => {
+                    const taskDate = new Date(t.updatedAt).toISOString().split('T')[0];
+                    return taskDate === dateStr;
+                  });
+
+                  const count = dayTasks.length;
+                  const completedCount = dayTasks.filter(t => t.status === "COMPLETED").length;
+                  const inProgressCount = dayTasks.filter(t => t.status === "IN_PROGRESS").length;
+
+                  // Determine dominant status for color
+                  let type = "plan";
+                  if (completedCount > 0 && completedCount >= inProgressCount) type = "done";
+                  else if (inProgressCount > 0) type = "prog";
+
+                  return {
+                    dayName: days[date.getDay()],
+                    count,
+                    type,
+                    date: dateStr
+                  };
+                });
+
+                // 2. Normalize height
+                const maxCount = Math.max(...dailyStats.map(s => s.count), 1); // Avoid div by 0
+
+                return dailyStats.map((stat, i) => {
+                  // Calculate height percentage (min 10% for visibility)
+                  const heightPercent = stat.count === 0 ? 0 : Math.max(15, Math.round((stat.count / maxCount) * 100));
+
+                  return (
+                    <div key={i} className="flex flex-col items-center gap-3 w-full group">
+                      <div className="relative h-48 w-full flex items-end justify-center">
+                        <div
+                          className={`w-10 rounded-t-xl transition-all duration-500 group-hover:w-12 ${stat.count === 0 ? 'bg-slate-100' :
+                              stat.type === 'done' ? 'bg-brand shadow-lg shadow-brand/20' :
+                                stat.type === 'prog' ? 'bg-accent' : 'bg-slate-300'
+                            }`}
+                          style={{ height: `${heightPercent}%` }}
+                        />
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                          {stat.count} tasks
+                        </div>
+                      </div>
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{stat.dayName}</span>
                     </div>
-                  </div>
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{b.d}</span>
-                </div>
-              ))}
+                  );
+                });
+              })()}
             </div>
           </div>
         </div>
@@ -187,8 +223,8 @@ export default function Home() {
                   <button
                     onClick={() => startTask(task)}
                     className={`h-10 w-10 shrink-0 rounded-xl flex items-center justify-center text-white transition-colors ${activeTask?._id === task._id && isRunning
-                        ? 'bg-amber-400 animate-pulse'
-                        : (task.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-brand')
+                      ? 'bg-amber-400 animate-pulse'
+                      : (task.status === 'COMPLETED' ? 'bg-emerald-500' : 'bg-brand')
                       }`}
                   >
                     {activeTask?._id === task._id && isRunning ? (

@@ -8,6 +8,7 @@ import {
   getMe,
   updateProfile,
 } from "@/api/auth.api";
+import { setAccessToken } from "@/lib/api";
 import {
   LoginPayload,
   RegisterPayload,
@@ -41,8 +42,8 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
   const loginMutation = useMutation({
     mutationFn: (payload: LoginPayload) => login(payload),
     onSuccess: async (data: any) => {
-      if (data.token) {
-        localStorage.setItem("token", data.token);
+      if (data.accessToken) {
+        setAccessToken(data.accessToken);
       }
       // 🔥 Force fetch user before navigation
       await queryClient.fetchQuery({
@@ -56,8 +57,8 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
   const registerMutation = useMutation({
     mutationFn: (payload: RegisterPayload) => register(payload),
     onSuccess: (data: any) => {
-      if (data.token) {
-        localStorage.setItem("token", data.token);
+      if (data.accessToken) {
+        setAccessToken(data.accessToken);
       }
     },
   });
@@ -65,7 +66,7 @@ export const useAuth = ({ enabled = false }: UseAuthOptions = {}) => {
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      localStorage.removeItem("token");
+      setAccessToken(null);
       queryClient.clear();
     },
   });

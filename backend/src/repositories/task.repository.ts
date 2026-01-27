@@ -26,7 +26,7 @@ export const updateTaskById = (id: string, data: any) =>
 export const deleteTaskById = (id: string) =>
   TaskModel.findByIdAndDelete(id).exec();
 
-/* ✅ PAGINATED + COUNT */
+
 export const findTasksForUser = async ({
   userId,
   organizationId,
@@ -53,7 +53,7 @@ export const findTasksForUser = async ({
   if (organizationId) {
     filters.organizationId = new mongoose.Types.ObjectId(organizationId);
   } else {
-    // Fallback to user-specific filtering if no organization is provided
+
     filters.$or = [
       { creatorId: new mongoose.Types.ObjectId(userId) },
       { assignedToId: new mongoose.Types.ObjectId(userId) },
@@ -76,4 +76,19 @@ export const findTasksForUser = async ({
   ]);
 
   return { tasks, total };
+};
+
+export const updateTasksOrganization = async (
+  userId: string,
+  oldOrgId: string | null,
+  newOrgId: string
+) => {
+  const filter: any = { creatorId: userId };
+  if (oldOrgId) {
+    filter.organizationId = oldOrgId;
+  }
+
+  return TaskModel.updateMany(filter, {
+    $set: { organizationId: newOrgId },
+  }).exec();
 };

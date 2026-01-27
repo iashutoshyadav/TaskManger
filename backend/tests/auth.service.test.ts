@@ -23,6 +23,6 @@ describe("Auth Service", () => {
     });
 
     expect(result.user.email).toBe("test@example.com");
-    expect(result.token).toBeDefined();
+    expect(result.accessToken).toBeDefined();
   });
 });
